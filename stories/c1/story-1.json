@@ -1,0 +1,17 @@
+{
+  "id": 1,
+  "level": "C1",
+  "title": "The Last Message",
+
+  "paragraphs": [
+    {
+      "id": 1,
+      "text": "When Ethan checked his phone that morning, he noticed a message from a number he did not recognize."
+    },
+
+    {
+      "id": 2,
+      "text": "The message simply read, 'Do not trust anyone today.'"
+    }
+  ]
+}
