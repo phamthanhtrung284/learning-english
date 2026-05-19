@@ -53,7 +53,7 @@ export default function LoginPage({ onLogin }) {
   return (
     <div className="auth-scene relative grid min-h-screen min-h-[100dvh] grid-cols-1 overflow-hidden bg-[var(--bg)] text-[var(--text)] lg:grid-cols-2">
       <div className="relative hidden items-center justify-center p-10 lg:flex">
-        <div className="auth-island relative w-full max-w-xl overflow-hidden rounded-[26px] border border-[var(--border)] bg-[color-mix(in_srgb,var(--bg-card)_80%,transparent)] p-9 shadow-[var(--shadow-card)] backdrop-blur-[18px]">
+        <div className="auth-island relative w-full max-w-xl overflow-hidden rounded-[26px] border border-[var(--border)] bg-[var(--bg-card)] p-9 shadow-[var(--shadow-card)]">
           <div className="auth-stars" aria-hidden />
 
           <div

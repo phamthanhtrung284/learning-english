@@ -15,6 +15,7 @@ const publicUser = (user) => ({
   level: user.level,
   xp: user.xp ?? 0,
   streak: user.streak ?? 0,
+  isAdmin: Boolean(user.isAdmin),
 });
 
 // REGISTER
@@ -51,14 +52,16 @@ export const register =
       );
 
     // create user
+    const adminEmail = String(process.env.ADMIN_EMAIL || "").trim().toLowerCase();
+    const desiredEmail = String(email || "").trim().toLowerCase();
+    const isFirstUser = (await User.countDocuments()) === 0;
+
     const user =
       await User.create({
-
         username,
-        email,
-
-        password:
-          hashedPassword
+        email: desiredEmail,
+        password: hashedPassword,
+        isAdmin: Boolean((adminEmail && desiredEmail === adminEmail) || isFirstUser),
       });
 
     // create token

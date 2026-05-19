@@ -1,0 +1,31 @@
+############################################
+# Root ignore (monorepo)
+############################################
+
+# dependencies / build artifacts
+**/node_modules/
+**/dist/
+**/build/
+**/.next/
+
+# Expo / React Native
+**/.expo/
+**/.expo-shared/
+**/android/
+**/ios/
+
+# env files (keep examples)
+**/.env
+**/.env.*
+!**/.env.example
+
+# logs
+**/*.log
+**/logs/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+

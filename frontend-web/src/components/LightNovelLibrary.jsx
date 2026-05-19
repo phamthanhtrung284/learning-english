@@ -16,6 +16,10 @@ export default function LightNovelLibrary({
   nightMode = false,
 }) {
   const [vocabWords, setVocabWords] = useState([]);
+  const [remoteSeries, setRemoteSeries] = useState([]);
+  const [remoteLoading, setRemoteLoading] = useState(false);
+  const [remoteError, setRemoteError] = useState("");
+  const [openingChapterId, setOpeningChapterId] = useState(null);
   const [readProgress, setReadProgress] = useState(0);
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
 
@@ -39,6 +43,30 @@ export default function LightNovelLibrary({
   useEffect(() => {
     queueMicrotask(() => void refreshVocab());
   }, [refreshVocab]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setRemoteLoading(true);
+    setRemoteError("");
+    void (async () => {
+      try {
+        const { data } = await api.get("/library/series");
+        if (!cancelled) setRemoteSeries(Array.isArray(data) ? data : []);
+      } catch (e) {
+        if (!cancelled) {
+          setRemoteError(
+            e?.response?.data?.error || e?.message || "Không tải được truyện từ server"
+          );
+          setRemoteSeries([]);
+        }
+      } finally {
+        if (!cancelled) setRemoteLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     const close = (e) => {
@@ -154,24 +182,24 @@ export default function LightNovelLibrary({
                         Xuất từ ▾
                       </button>
                       {exportMenuOpen ? (
-                        <div className="absolute right-0 z-50 mt-2 w-52 overflow-hidden rounded-xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--bg-card)_84%,transparent)] py-1 shadow-[var(--shadow-card)] backdrop-blur-[18px]">
+                        <div className="absolute right-0 z-50 mt-2 w-52 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-1 shadow-[var(--shadow-card)]">
                           <button
                             type="button"
-                            className="block w-full px-4 py-2.5 text-left text-sm font-semibold text-[var(--text)] hover:bg-[color-mix(in_srgb,var(--primary)_10%,transparent)]"
+                            className="block w-full px-4 py-2.5 text-left text-sm font-semibold text-[var(--text)] hover:bg-[var(--bg-soft)]"
                             onClick={() => handleExport("csv")}
                           >
                             CSV
                           </button>
                           <button
                             type="button"
-                            className="block w-full px-4 py-2.5 text-left text-sm font-semibold text-[var(--text)] hover:bg-[color-mix(in_srgb,var(--primary)_10%,transparent)]"
+                            className="block w-full px-4 py-2.5 text-left text-sm font-semibold text-[var(--text)] hover:bg-[var(--bg-soft)]"
                             onClick={() => handleExport("anki")}
                           >
                             Anki (.txt)
                           </button>
                           <button
                             type="button"
-                            className="block w-full px-4 py-2.5 text-left text-sm font-semibold text-[var(--text)] hover:bg-[color-mix(in_srgb,var(--primary)_10%,transparent)]"
+                            className="block w-full px-4 py-2.5 text-left text-sm font-semibold text-[var(--text)] hover:bg-[var(--bg-soft)]"
                             onClick={() => handleExport("quizlet")}
                           >
                             Copy Quizlet
@@ -182,7 +210,7 @@ export default function LightNovelLibrary({
                   </div>
                 </div>
 
-                <div className="h-1 w-full overflow-hidden rounded-full bg-[color-mix(in_srgb,var(--text-soft)_10%,transparent)]">
+                <div className="h-1 w-full overflow-hidden rounded-full bg-[var(--bg-soft)]">
                   <div
                     className="ln-progress-fill h-full rounded-full"
                     style={{
@@ -210,7 +238,7 @@ export default function LightNovelLibrary({
               className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain"
             >
               <div className="mx-auto w-full max-w-[840px] px-3 py-8 sm:px-6 md:py-10">
-                <LnChapterView chapter={chapter} zenMode={zenMode} nightMode={nightMode} />
+                <LnChapterView chapter={chapter} zenMode={zenMode} nightMode={nightMode} scrollerRef={scrollerRef} />
               </div>
             </div>
           </div>
@@ -218,6 +246,26 @@ export default function LightNovelLibrary({
       </div>
     );
   }
+
+  const seriesList = [
+    // server series trước
+    ...remoteSeries.map((s) => ({
+      id: `remote-${s.id}`,
+      displayTitle: s.displayTitle,
+      author: s.author,
+      tagline: s.tagline,
+      accent: s.accent,
+      coverEmoji: s.coverEmoji,
+      chapters: (s.chapters || []).map((ch) => ({
+        id: `remote-ch-${ch.id}`,
+        label: ch.label || ch.chapterTitle || "Chapter",
+        chapterId: ch.id,
+        chapterTitle: ch.chapterTitle || "",
+      })),
+    })),
+    // fallback hardcode
+    ...WEB_LIGHT_NOVEL_SERIES,
+  ];
 
   return (
     <div className="ln-studio ln-studio-ui mx-auto w-full max-w-6xl px-4 pb-16 pt-6 text-[var(--text)] sm:px-8 md:px-10 md:pt-10">
@@ -231,10 +279,19 @@ export default function LightNovelLibrary({
         <p className="relative mt-4 max-w-2xl text-[15px] leading-relaxed text-[var(--text-soft)] md:text-[17px]">
           Hover a word to see meaning. Double-click a sentence to highlight grammar lightly.
         </p>
+        {remoteLoading ? (
+          <p className="relative mt-3 text-xs font-semibold text-[var(--text-soft)]">
+            Đang tải truyện từ server…
+          </p>
+        ) : remoteError ? (
+          <p className="relative mt-3 text-xs font-semibold text-[color-mix(in_srgb,#ef4444_70%,var(--text-soft))]">
+            {remoteError}
+          </p>
+        ) : null}
       </header>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {WEB_LIGHT_NOVEL_SERIES.map((series) => (
+        {seriesList.map((series) => (
           <article
             key={series.id}
             className="group surface-panel card-hover relative flex flex-col overflow-hidden"
@@ -260,10 +317,29 @@ export default function LightNovelLibrary({
                   <button
                     key={ch.id}
                     type="button"
-                    onClick={() => onSelectChapter(ch.chapter)}
+                    disabled={Boolean(openingChapterId && ch.chapterId === openingChapterId)}
+                    onClick={async () => {
+                      if (ch.chapter) return onSelectChapter(ch.chapter);
+                      if (!ch.chapterId) return;
+                      try {
+                        setOpeningChapterId(ch.chapterId);
+                        const { data } = await api.get(`/library/chapters/${ch.chapterId}`);
+                        onSelectChapter(data);
+                      } catch (e) {
+                        alert(
+                          e?.response?.data?.error ||
+                            e?.message ||
+                            "Không mở được chapter"
+                        );
+                      } finally {
+                        setOpeningChapterId(null);
+                      }
+                    }}
                     className="w-full rounded-2xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--bg-soft)_90%,transparent)] px-4 py-3 text-left text-sm font-semibold text-[var(--text)] transition hover:border-[color-mix(in_srgb,var(--primary)_40%,transparent)] active:scale-[0.99]"
                   >
-                    {ch.label}
+                    {openingChapterId && ch.chapterId === openingChapterId
+                      ? "Đang mở…"
+                      : ch.label}
                   </button>
                 ))}
               </div>

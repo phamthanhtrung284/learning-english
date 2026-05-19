@@ -19,12 +19,18 @@ export default function LnChapterView({
   chapter,
   zenMode = false,
   nightMode = false,
+  scrollerRef = null,
 }) {
   const glossary = chapter.glossary || {};
 
   const [grammarByKey, setGrammarByKey] = useState({});
   const [grammarLoadingKey, setGrammarLoadingKey] = useState(null);
   const [grammarError, setGrammarError] = useState(null);
+
+  const [page, setPage] = useState(0);
+  const PARAGRAPHS_PER_PAGE = 50;
+  const totalPages = Math.ceil((chapter.paragraphs?.length || 0) / PARAGRAPHS_PER_PAGE);
+  const currentParagraphs = (chapter.paragraphs || []).slice(page * PARAGRAPHS_PER_PAGE, (page + 1) * PARAGRAPHS_PER_PAGE);
 
   const runGrammar = useCallback(async (sentenceText, sentenceKey) => {
     const trimmed = sentenceText.trim();
@@ -53,7 +59,7 @@ export default function LnChapterView({
   return (
     <article className="relative overflow-visible rounded-2xl bg-transparent px-1 py-2 shadow-none sm:px-2">
       {chapter.source && !zenMode && (
-        <header className="ln-studio-ui mb-8 rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)] px-5 py-4 text-sm text-[var(--text-soft)] shadow-[var(--shadow-soft)] backdrop-blur-sm">
+        <header className="ln-studio-ui mb-8 rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)] px-5 py-4 text-sm text-[var(--text-soft)] shadow-[var(--shadow-soft)]">
           <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--text-soft)]">
             Source &amp; license
           </div>
@@ -93,7 +99,7 @@ export default function LnChapterView({
             </p>
           )}
           {chapter.blurb && (
-            <div className="mx-auto mt-8 max-w-[760px] rounded-[22px] border border-[var(--border)] bg-[color-mix(in_srgb,var(--bg-card)_55%,transparent)] px-6 py-5 shadow-[var(--shadow-soft)] backdrop-blur-[18px]">
+            <div className="mx-auto mt-8 max-w-[760px] rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)] px-6 py-5 shadow-[var(--shadow-soft)]">
               <p className="font-ln-studio text-[15px] italic leading-relaxed text-[var(--text-soft)]">
                 {chapter.blurb}
               </p>
@@ -113,7 +119,8 @@ export default function LnChapterView({
 
       <LnCursorTooltipProvider>
         <div className={zenMode ? "mt-6 space-y-8 md:space-y-10" : "mt-12 space-y-10 md:space-y-14"}>
-          {chapter.paragraphs.map((p, pi) => {
+          {currentParagraphs.map((p, offsetIndex) => {
+          const pi = page * PARAGRAPHS_PER_PAGE + offsetIndex;
           const sentences = splitParagraphToSentences(p.en);
           return (
             <section key={pi} className="overflow-visible">
@@ -126,7 +133,7 @@ export default function LnChapterView({
                 return (
                   <p
                     key={sentenceKey}
-                    className={`font-ln-studio mb-6 overflow-visible whitespace-pre-wrap text-[20px] leading-[1.9] last:mb-0 md:mb-9 ${zenText}`}
+                    className={`font-ln-studio mb-6 overflow-visible whitespace-pre-wrap text-[clamp(18px,1.6vw,22px)] leading-[1.9] last:mb-0 md:mb-9 ${zenText}`}
                   >
                     <span
                       className={`ln-sentence-wrap rounded-sm outline-none transition-colors ${
@@ -137,7 +144,6 @@ export default function LnChapterView({
                           : "hover:bg-[color-mix(in_srgb,var(--primary)_6%,transparent)]"
                       }`}
                       onDoubleClick={(e) => {
-                        e.preventDefault();
                         runGrammar(sentenceText, sentenceKey);
                       }}
                       title="Double-click for grammar colors"
@@ -176,6 +182,40 @@ export default function LnChapterView({
           );
         })}
         </div>
+
+        {totalPages > 1 && (
+          <div className="mt-16 flex flex-wrap items-center justify-center gap-4 border-t border-[var(--border)] pt-8">
+            <button
+              type="button"
+              disabled={page === 0}
+              onClick={() => {
+                setPage(p => Math.max(0, p - 1));
+                const el = scrollerRef?.current;
+                if (el) el.scrollTo({ top: 0, behavior: "smooth" });
+                else window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              className="glass-btn h-12 px-6 text-[15px] font-bold disabled:opacity-30"
+            >
+              ← Trang trước
+            </button>
+            <span className="font-display text-base font-bold text-[var(--text-soft)]">
+              {page + 1} / {totalPages}
+            </span>
+            <button
+              type="button"
+              disabled={page >= totalPages - 1}
+              onClick={() => {
+                setPage(p => p + 1);
+                const el = scrollerRef?.current;
+                if (el) el.scrollTo({ top: 0, behavior: "smooth" });
+                else window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              className="glass-btn h-12 px-6 text-[15px] font-bold disabled:opacity-30"
+            >
+              Trang sau →
+            </button>
+          </div>
+        )}
       </LnCursorTooltipProvider>
     </article>
   );

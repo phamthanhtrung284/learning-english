@@ -8,7 +8,7 @@ function RankMedal({ rank }) {
       className={`flex h-10 w-10 items-center justify-center rounded-2xl border border-[var(--border)] font-mono text-sm font-extrabold ${
         top
           ? "bg-[var(--gradient-primary)] text-white shadow-[var(--shadow-soft)]"
-          : "bg-[color-mix(in_srgb,var(--bg-card)_80%,transparent)] text-[var(--text)]"
+          : "bg-[var(--bg-card)] text-[var(--text)]"
       }`}
       aria-label={`Rank ${rank}`}
     >
@@ -21,7 +21,7 @@ function PodiumCard({ r, tall }) {
   if (!r) return <div className="w-[min(30%,140px)]" aria-hidden />;
   return (
     <div
-      className={`flex w-[min(30%,140px)] flex-col items-center rounded-[24px] border border-[var(--border)] bg-[color-mix(in_srgb,var(--bg-card)_95%,transparent)] px-3 text-center shadow-[var(--shadow-soft)] ${
+      className={`flex w-[min(30%,140px)] flex-col items-center rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] px-3 text-center shadow-[var(--shadow-soft)] ${
         tall ? "pb-6 pt-8" : "pb-5 pt-6"
       }`}
       style={
@@ -127,7 +127,7 @@ export default function Leaderboard() {
               {rest.map((r) => (
                 <div
                   key={r.id}
-                  className="flex items-center gap-4 rounded-[22px] border border-[var(--border)] bg-[color-mix(in_srgb,var(--bg-card)_92%,transparent)] px-4 py-3 shadow-[var(--shadow-soft)]"
+                  className="flex items-center gap-4 rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3 shadow-[var(--shadow-soft)]"
                 >
                   <RankMedal rank={r.rank} />
                   <div className="min-w-0 flex-1">

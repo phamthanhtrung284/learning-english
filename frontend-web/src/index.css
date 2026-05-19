@@ -1,42 +1,42 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;0,7..72,700;1,7..72,400&family=Outfit:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;0,7..72,700;1,7..72,400&family=Outfit:wght@400;500;600;700;800&family=Cinzel:wght@400;600;700;900&display=swap");
 
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ========== Premium Day (default) ========== */
+/* ========== Berserk Dark Manga — Day (still dark, just slightly lighter) ========== */
 :root {
-  --bg: #f7f4ef;
-  --bg-soft: #fbf8f3;
-  --bg-card: rgba(255, 255, 255, 0.72);
+  --bg: #0d0d0f;
+  --bg-soft: #111114;
+  --bg-card: #16161a;
 
-  --primary: #7c3aed; /* violet */
-  --primary-2: #22d3ee; /* cyan */
+  /* Blood red accent — Berserk signature */
+  --primary: #c0392b;
+  --primary-2: #e74c3c;
 
-  --blue: #22d3ee;
-  --green: #34d399;
-  --yellow: #fbbf24;
-  --pink: #f472b6;
-  --orange: #fb923c;
+  --blue: #4a9eff;
+  --green: #27ae60;
+  --yellow: #f39c12;
+  --pink: #8e44ad;
+  --orange: #e67e22;
 
-  --text: #0f172a;
-  --text-soft: rgba(15, 23, 42, 0.66);
+  --text: #e8e6e1;
+  --text-soft: #7a7870;
 
-  --border: rgba(15, 23, 42, 0.08);
+  --border: rgba(232, 230, 225, 0.07);
 
-  --shadow-soft: 0 10px 24px rgba(2, 6, 23, 0.1);
-  --shadow-card: 0 18px 50px rgba(2, 6, 23, 0.14);
+  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.55);
+  --shadow-card: 0 16px 48px rgba(0, 0, 0, 0.7);
 
-  --gradient-primary: linear-gradient(135deg, rgba(124, 58, 237, 0.92) 0%, rgba(34, 211, 238, 0.92) 100%);
-  --gradient-pink: linear-gradient(135deg, rgba(244, 114, 182, 0.25) 0%, rgba(124, 58, 237, 0.08) 100%);
-  --gradient-blue: linear-gradient(135deg, rgba(34, 211, 238, 0.22) 0%, rgba(124, 58, 237, 0.08) 100%);
-  --gradient-green: linear-gradient(135deg, rgba(52, 211, 153, 0.22) 0%, rgba(34, 211, 238, 0.08) 100%);
-  --gradient-yellow: linear-gradient(135deg, rgba(251, 191, 36, 0.22) 0%, rgba(124, 58, 237, 0.08) 100%);
+  --gradient-primary: linear-gradient(135deg, #c0392b 0%, #8b0000 100%);
+  --gradient-pink: linear-gradient(135deg, rgba(142, 68, 173, 0.18) 0%, rgba(192, 57, 43, 0.06) 100%);
+  --gradient-blue: linear-gradient(135deg, rgba(74, 158, 255, 0.14) 0%, rgba(192, 57, 43, 0.04) 100%);
+  --gradient-green: linear-gradient(135deg, rgba(39, 174, 96, 0.14) 0%, rgba(192, 57, 43, 0.04) 100%);
+  --gradient-yellow: linear-gradient(135deg, rgba(243, 156, 18, 0.14) 0%, rgba(192, 57, 43, 0.04) 100%);
 
-  --glow-cyan: rgba(34, 211, 238, 0.28);
-  --glow-violet: rgba(124, 58, 237, 0.32);
+  --glow-red: rgba(192, 57, 43, 0.18);
+  --glow-dark: rgba(0, 0, 0, 0.6);
 
-  /* legacy aliases used in older classes */
   --bg-base: var(--bg);
   --bg-deep: var(--bg-soft);
   --accent: var(--primary);
@@ -48,53 +48,53 @@
   --border-subtle: var(--border);
   --border-strong: var(--border);
   --surface: var(--bg-card);
-  --surface-elevated: rgba(255, 255, 255, 0.82);
+  --surface-elevated: #1e1e24;
 }
 
-/* ========== Premium Night (cinematic) ========== */
+/* ========== Berserk Dark Manga — Night (deeper) ========== */
 :root.dark {
-  --bg: #07111f;
-  --bg-soft: #0b1020;
-  --bg-card: rgba(17, 24, 39, 0.62);
+  --bg: #080809;
+  --bg-soft: #0d0d0f;
+  --bg-card: #111114;
 
-  --primary: #a78bfa; /* violet */
-  --primary-2: #22d3ee; /* cyan */
+  --primary: #c0392b;
+  --primary-2: #e74c3c;
 
-  --blue: #22d3ee;
-  --green: #34d399;
-  --yellow: #fbbf24;
-  --pink: #fb7185;
-  --orange: #fb923c;
+  --blue: #4a9eff;
+  --green: #27ae60;
+  --yellow: #f39c12;
+  --pink: #8e44ad;
+  --orange: #e67e22;
 
-  --text: rgba(248, 250, 252, 0.92);
-  --text-soft: rgba(226, 232, 240, 0.68);
+  --text: #ede9e0;
+  --text-soft: #6b6860;
 
-  --border: rgba(255, 255, 255, 0.08);
+  --border: rgba(237, 233, 224, 0.06);
 
-  --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.28);
-  --shadow-card: 0 26px 80px rgba(0, 0, 0, 0.38);
+  --shadow-soft: 0 10px 32px rgba(0, 0, 0, 0.7);
+  --shadow-card: 0 20px 60px rgba(0, 0, 0, 0.85);
 
-  --gradient-primary: linear-gradient(135deg, rgba(167, 139, 250, 0.95) 0%, rgba(34, 211, 238, 0.88) 100%);
-  --gradient-pink: linear-gradient(135deg, rgba(251, 113, 133, 0.18) 0%, rgba(167, 139, 250, 0.06) 100%);
-  --gradient-blue: linear-gradient(135deg, rgba(34, 211, 238, 0.16) 0%, rgba(167, 139, 250, 0.06) 100%);
-  --gradient-green: linear-gradient(135deg, rgba(52, 211, 153, 0.16) 0%, rgba(34, 211, 238, 0.06) 100%);
-  --gradient-yellow: linear-gradient(135deg, rgba(251, 191, 36, 0.16) 0%, rgba(167, 139, 250, 0.06) 100%);
+  --gradient-primary: linear-gradient(135deg, #c0392b 0%, #7b0000 100%);
+  --gradient-pink: linear-gradient(135deg, rgba(142, 68, 173, 0.16) 0%, rgba(192, 57, 43, 0.06) 100%);
+  --gradient-blue: linear-gradient(135deg, rgba(74, 158, 255, 0.12) 0%, rgba(192, 57, 43, 0.04) 100%);
+  --gradient-green: linear-gradient(135deg, rgba(39, 174, 96, 0.12) 0%, rgba(192, 57, 43, 0.04) 100%);
+  --gradient-yellow: linear-gradient(135deg, rgba(243, 156, 18, 0.12) 0%, rgba(192, 57, 43, 0.04) 100%);
 
-  --glow-cyan: rgba(34, 211, 238, 0.18);
-  --glow-violet: rgba(167, 139, 250, 0.22);
+  --glow-red: rgba(192, 57, 43, 0.14);
+  --glow-dark: rgba(0, 0, 0, 0.8);
 
   --bg-base: var(--bg);
   --bg-deep: var(--bg-soft);
   --accent: var(--primary);
-  --accent-soft: color-mix(in srgb, var(--primary) 18%, transparent);
-  --accent-glow: color-mix(in srgb, var(--primary) 28%, transparent);
+  --accent-soft: color-mix(in srgb, var(--primary) 16%, transparent);
+  --accent-glow: color-mix(in srgb, var(--primary) 26%, transparent);
   --text-primary: var(--text);
   --text-body: var(--text-soft);
   --text-muted: var(--text-soft);
   --border-subtle: var(--border);
   --border-strong: var(--border);
   --surface: var(--bg-card);
-  --surface-elevated: rgba(17, 24, 39, 0.72);
+  --surface-elevated: #18181c;
 }
 
 html {
@@ -126,30 +126,32 @@ body {
 }
 
 .font-display {
-  font-family: "Outfit", system-ui, sans-serif;
+  font-family: "DM Sans", "Inter", system-ui, sans-serif;
 }
 
 .font-mascot {
-  font-family: "Outfit", "Inter", system-ui, sans-serif;
+  font-family: "DM Sans", "Inter", system-ui, sans-serif;
 }
 
 .font-ln-reading {
   font-family: "Lora", "Literata", Georgia, "Times New Roman", serif;
-  font-size: 19px;
-  line-height: 1.8;
+  font-size: clamp(18px, 1.55vw, 22px);
+  line-height: 1.9;
+  letter-spacing: 0.01em;
 }
 
 .font-ln-studio {
   font-family: "Lora", "Literata", Georgia, "Times New Roman", serif;
-  font-size: 20px;
-  line-height: 1.8;
+  font-size: clamp(18px, 1.6vw, 22px);
+  line-height: 1.9;
+  letter-spacing: 0.01em;
 }
 
 .ln-studio-ui {
   font-family: "Inter", system-ui, sans-serif;
 }
 
-/* ========== Animated atmosphere ========== */
+/* ========== Animated atmosphere — Berserk dark ========== */
 .app-atmosphere {
   position: fixed;
   inset: 0;
@@ -157,9 +159,8 @@ body {
   pointer-events: none;
   overflow: hidden;
   background:
-    radial-gradient(900px 520px at 12% -8%, var(--glow-violet), transparent 55%),
-    radial-gradient(860px 520px at 100% 0%, var(--glow-cyan), transparent 58%),
-    radial-gradient(760px 560px at 52% 112%, rgba(34, 211, 238, 0.12), transparent 62%),
+    radial-gradient(900px 520px at 15% -10%, var(--glow-red), transparent 60%),
+    radial-gradient(900px 560px at 95% 0%, rgba(0,0,0,0.4), transparent 62%),
     linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
 }
 
@@ -168,67 +169,60 @@ body {
   position: absolute;
   inset: -20%;
   background:
-    radial-gradient(circle at 18% 26%, rgba(167, 139, 250, 0.14) 0%, transparent 42%),
-    radial-gradient(circle at 86% 18%, rgba(34, 211, 238, 0.1) 0%, transparent 44%),
-    radial-gradient(circle at 58% 86%, rgba(124, 58, 237, 0.12) 0%, transparent 48%);
-  animation: blob-drift 36s ease-in-out infinite alternate;
+    radial-gradient(circle at 18% 26%, var(--glow-red) 0%, transparent 46%),
+    radial-gradient(circle at 86% 18%, rgba(0,0,0,0.5) 0%, transparent 46%);
+  animation: none;
+  transform: translate(2%, 1%) scale(1.02);
 }
 
-/* Skip feTurbulence SVG filter — very expensive on paint/composite */
 .app-atmosphere::after {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.035;
-  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.35), transparent 70%);
+  opacity: 0.015;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.15), transparent 70%);
 }
 
 .dark .app-atmosphere {
   background:
-    radial-gradient(860px 520px at 50% -15%, rgba(167, 139, 250, 0.22), transparent 58%),
-    radial-gradient(760px 520px at 0% 105%, rgba(34, 211, 238, 0.11), transparent 56%),
-    radial-gradient(700px 520px at 105% 80%, rgba(99, 102, 241, 0.1), transparent 55%),
-    linear-gradient(180deg, #050a14 0%, var(--bg) 55%, #0b1020 100%);
+    radial-gradient(900px 560px at 50% -15%, var(--glow-red), transparent 62%),
+    radial-gradient(820px 560px at 100% 0%, rgba(0,0,0,0.6), transparent 64%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
 }
 
 .dark .app-atmosphere::before {
   background:
-    radial-gradient(circle at 22% 22%, rgba(167, 139, 250, 0.16) 0%, transparent 38%),
-    radial-gradient(circle at 78% 32%, rgba(34, 211, 238, 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 50% 92%, rgba(99, 102, 241, 0.12) 0%, transparent 44%);
-  animation: blob-drift 44s ease-in-out infinite alternate;
+    radial-gradient(circle at 22% 22%, var(--glow-red) 0%, transparent 44%),
+    radial-gradient(circle at 78% 32%, rgba(0,0,0,0.5) 0%, transparent 46%);
+  animation: none;
+  transform: translate(2%, 1%) scale(1.02);
 }
 
+/* Manga-style grain texture */
 .app-atmosphere .stars-layer {
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(1.5px 1.5px at 10% 20%, rgba(255, 255, 255, 0.55) 50%, transparent 52%),
-    radial-gradient(1px 1px at 30% 70%, rgba(255, 255, 255, 0.35) 50%, transparent 52%),
-    radial-gradient(1.5px 1.5px at 72% 15%, rgba(255, 255, 255, 0.45) 50%, transparent 52%),
-    radial-gradient(1px 1px at 88% 55%, rgba(255, 255, 255, 0.3) 50%, transparent 52%),
-    radial-gradient(1.5px 1.5px at 45% 40%, rgba(255, 255, 255, 0.25) 50%, transparent 52%);
-  opacity: 0.35;
-  animation: twinkle 6s ease-in-out infinite alternate;
+    radial-gradient(1px 1px at 10% 20%, rgba(255, 255, 255, 0.12) 50%, transparent 52%),
+    radial-gradient(1px 1px at 30% 70%, rgba(255, 255, 255, 0.08) 50%, transparent 52%),
+    radial-gradient(1px 1px at 72% 15%, rgba(255, 255, 255, 0.10) 50%, transparent 52%),
+    radial-gradient(1px 1px at 88% 55%, rgba(255, 255, 255, 0.07) 50%, transparent 52%),
+    radial-gradient(1px 1px at 45% 40%, rgba(255, 255, 255, 0.06) 50%, transparent 52%);
+  opacity: 0.5;
+  animation: none;
 }
 
 .dark .app-atmosphere .stars-layer {
-  opacity: 0.85;
+  opacity: 0.4;
 }
 
 .app-atmosphere .sparkles {
-  position: absolute;
-  inset: 0;
-  opacity: 0.12;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, transparent 55%);
-  background-size: 3px 3px;
-  mask-image: radial-gradient(ellipse 70% 50% at 50% 30%, black, transparent);
-  animation: sparkle-move 14s linear infinite;
+  display: none;
 }
 
 .dark .app-atmosphere .sparkles {
-  opacity: 0.08;
+  opacity: 0.01;
 }
 
 @keyframes blob-drift {
@@ -242,10 +236,10 @@ body {
 
 @keyframes twinkle {
   0% {
-    opacity: 0.25;
+    opacity: 0.06;
   }
   100% {
-    opacity: 0.55;
+    opacity: 0.14;
   }
 }
 
@@ -319,15 +313,14 @@ body {
 
 /* ========== Surfaces ========== */
 .glass-sidebar {
-  background: color-mix(in srgb, var(--bg-card) 86%, transparent);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: var(--bg-card);
+  /* NOTE(perf): backdrop-filter trên nhiều panel dễ gây lag khi scroll/hover */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border-right: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--border) 55%, transparent),
-    0 14px 40px rgba(0, 0, 0, 0.22),
-    0 0 60px -18px var(--glow-cyan),
-    0 0 90px -30px var(--glow-violet);
+    0 14px 40px rgba(0, 0, 0, 0.22);
   border-radius: 24px;
 }
 
@@ -343,11 +336,11 @@ body {
 .surface-panel {
   border-radius: 1.35rem;
   border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
-  background: color-mix(in srgb, var(--bg-card) 88%, transparent);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: var(--bg-card);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   box-shadow:
-    0 0 0 1px color-mix(in srgb, rgba(255, 255, 255, 0.08) 35%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--border) 85%, transparent),
     var(--shadow-card);
 }
 
@@ -443,16 +436,11 @@ body {
   text-align: left;
   font-size: 0.875rem;
   font-weight: 600;
-  background:
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--primary-2) 14%, transparent),
-      color-mix(in srgb, var(--primary) 10%, transparent)
-    );
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
   color: var(--text);
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--primary-2) 35%, transparent),
-    0 10px 28px color-mix(in srgb, var(--primary-2) 14%, transparent);
+    0 0 0 1px color-mix(in srgb, var(--primary) 26%, transparent),
+    0 10px 24px rgba(0, 0, 0, 0.18);
   transition:
     background 0.22s ease,
     color 0.22s ease,
@@ -460,28 +448,20 @@ body {
 }
 
 .nav-pill-active:hover {
-  background:
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--primary-2) 18%, transparent),
-      color-mix(in srgb, var(--primary) 12%, transparent)
-    );
+  background: color-mix(in srgb, var(--primary) 18%, transparent);
 }
 
-/* ========== Reading frame (reference-style) ========== */
+/* ========== Reading frame (premium subtle) ========== */
 .glass-frame {
   position: relative;
   border-radius: 34px;
-  border: 1px solid color-mix(in srgb, rgba(255, 255, 255, 0.14) 70%, transparent);
-  background: color-mix(in srgb, var(--bg-card) 45%, transparent);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid color-mix(in srgb, var(--border) 92%, transparent);
+  background: var(--bg-card);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.06),
-    0 0 0 2px color-mix(in srgb, var(--primary-2) 18%, transparent),
-    0 44px 140px rgba(0, 0, 0, 0.58),
-    0 0 90px -28px var(--glow-cyan),
-    0 0 120px -44px var(--glow-violet);
+    0 0 0 1px color-mix(in srgb, var(--border) 85%, transparent),
+    var(--shadow-card);
 }
 
 .glass-frame::before {
@@ -491,29 +471,24 @@ body {
   border-radius: 28px;
   pointer-events: none;
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
-    inset 0 0 30px rgba(34, 211, 238, 0.08);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
   opacity: 0.9;
 }
 
 .glass-btn {
   border-radius: 14px;
   border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
-  background: color-mix(in srgb, var(--bg-card) 60%, transparent);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow:
-    0 10px 26px rgba(0, 0, 0, 0.22),
-    0 0 0 1px rgba(255, 255, 255, 0.06);
+  background: var(--bg-card);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: var(--shadow-soft);
   transition: transform 0.18s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .glass-btn:hover {
-  border-color: color-mix(in srgb, var(--primary-2) 32%, transparent);
+  border-color: color-mix(in srgb, var(--primary) 28%, transparent);
   box-shadow:
-    0 16px 34px rgba(0, 0, 0, 0.28),
-    0 0 0 1px rgba(255, 255, 255, 0.08),
-    0 0 30px -10px var(--glow-cyan);
+    0 14px 30px rgba(0, 0, 0, 0.22);
 }
 
 .glass-btn:active {
@@ -541,20 +516,20 @@ body {
 .btn-logout-magic {
   width: 100%;
   border-radius: 0.85rem;
-  border: 1px solid rgba(244, 63, 94, 0.45);
+  border: 1px solid color-mix(in srgb, var(--border) 92%, transparent);
   padding: 0.85rem 1rem;
   font-size: 0.875rem;
-  font-weight: 700;
-  color: #f43f5e;
+  font-weight: 650;
+  color: var(--text);
   cursor: pointer;
-  background: color-mix(in srgb, #f43f5e 8%, var(--bg-card));
-  box-shadow: none;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-soft);
   transition: transform 0.2s ease, box-shadow 0.25s ease, filter 0.2s ease;
 }
 
 .btn-logout-magic:hover {
   filter: brightness(1.02);
-  box-shadow: var(--shadow-soft);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.22);
 }
 
 .btn-logout-magic:active {
@@ -562,7 +537,7 @@ body {
 }
 
 .theme-switch-wrap {
-  background: color-mix(in srgb, var(--bg-card) 70%, transparent);
+  background: var(--bg-card);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-soft);
 }
@@ -600,7 +575,7 @@ body {
 }
 
 .sidebar-brand-tile:hover {
-  transform: scale(1.04) rotate(-2deg);
+  transform: scale(1.02);
 }
 
 .xp-bar-fill {
@@ -636,28 +611,24 @@ body {
 
 /* ========== Zen reading modes ========== */
 .ln-zen-shell-day {
-  background:
-    radial-gradient(900px 500px at 10% 0%, rgba(124, 58, 237, 0.08), transparent 55%),
-    radial-gradient(900px 520px at 100% 0%, rgba(34, 211, 238, 0.08), transparent 58%),
-    linear-gradient(180deg, #fbf8f3 0%, #f7f4ef 55%, #f3efe8 100%);
+  background: linear-gradient(180deg, var(--bg-soft) 0%, var(--bg) 100%);
 }
 
 .ln-zen-shell-night {
   background:
-    radial-gradient(900px 520px at 50% -10%, rgba(167, 139, 250, 0.24), transparent 58%),
-    radial-gradient(820px 520px at 110% 110%, rgba(34, 211, 238, 0.1), transparent 55%),
-    linear-gradient(180deg, #050a14 0%, #0b1020 55%, #07111f 100%);
+    radial-gradient(900px 520px at 50% -10%, var(--glow-violet), transparent 62%),
+    radial-gradient(820px 520px at 110% 110%, var(--glow-cyan), transparent 62%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
 }
 
 .ln-zen-text-day {
   font-family: "Lora", "Literata", Georgia, serif;
-  color: #3d3830;
+  color: var(--text);
 }
 
 .ln-zen-text-night {
   font-family: "Lora", "Literata", Georgia, serif;
-  color: #e8e6f2;
-  text-shadow: 0 0 40px rgba(167, 139, 250, 0.15);
+  color: var(--text);
 }
 
 /* ========== Inputs ========== */
@@ -698,7 +669,7 @@ body {
 .heatmap-cell:hover {
   transform: scale(1.15);
   z-index: 2;
-  box-shadow: 0 0 12px color-mix(in srgb, var(--green) 45%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--primary) 18%, transparent);
 }
 
 .heatmap-l0 {
@@ -764,11 +735,11 @@ body {
 .tooltip-glass {
   border-radius: 1rem;
   border: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
-  background: color-mix(in srgb, var(--bg-card) 84%, transparent);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: var(--bg-card);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 0 0 1px color-mix(in srgb, var(--border) 85%, transparent),
     var(--shadow-card);
   overflow: visible;
 }
@@ -783,7 +754,7 @@ body {
 
 /* ========== Mobile bottom nav ========== */
 .mobile-nav-dock {
-  box-shadow: 0 -12px 40px -12px color-mix(in srgb, var(--primary) 22%, transparent);
+  box-shadow: 0 -14px 40px -18px rgba(0, 0, 0, 0.55);
 }
 
 /* ========== Square UI mode ========== */
@@ -834,4 +805,190 @@ body {
     radial-gradient(1px 1px at 18% 70%, rgba(255, 255, 255, 0.4) 50%, transparent 52%),
     radial-gradient(1px 1px at 76% 74%, rgba(255, 255, 255, 0.35) 50%, transparent 52%);
   pointer-events: none;
+}
+
+/* ========== LN Reader — side panel layout ========== */
+
+/*
+  Panel is OVERLAID on top of the reader (absolute/fixed), NOT pushing text.
+  On mobile: bottom sheet.
+  On desktop: fixed panel anchored to the left edge of the reader frame.
+*/
+
+.ln-reader-with-panel {
+  position: relative;
+  width: 100%;
+}
+
+.ln-reader-content {
+  width: 100%;
+}
+
+/* Side panel — hidden by default */
+.ln-side-panel {
+  display: none;
+}
+
+/* ── Mobile: bottom sheet ── */
+@media (max-width: 767px) {
+  .ln-panel-open .ln-side-panel {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    max-height: 55dvh;
+    border-radius: 22px 22px 0 0;
+    border: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
+    border-bottom: none;
+    background: var(--bg-card);
+    box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.32);
+    animation: panel-slide-up 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+    overflow: hidden;
+  }
+
+  @keyframes panel-slide-up {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+}
+
+/* ── Desktop: absolute overlay, left side of reader, does NOT push text ── */
+@media (min-width: 768px) {
+  .ln-side-panel {
+    display: none;
+  }
+
+  .ln-panel-open .ln-side-panel {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 50;
+    width: 240px;
+    max-height: calc(100dvh - 120px);
+    border-radius: 20px;
+    border: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-card), 0 0 0 1px color-mix(in srgb, var(--border) 60%, transparent);
+    overflow: hidden;
+    animation: panel-slide-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+    /* Sticky within scroll container */
+    position: sticky;
+    top: 16px;
+    align-self: flex-start;
+    /* Override: use absolute overlay approach */
+    position: absolute;
+  }
+
+  @keyframes panel-slide-in {
+    from { opacity: 0; transform: translateX(-8px) scale(0.98); }
+    to   { opacity: 1; transform: translateX(0) scale(1); }
+  }
+}
+
+@media (min-width: 1024px) {
+  .ln-panel-open .ln-side-panel {
+    width: 260px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ln-side-panel {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ========== Top Navigation Bar — Berserk dark ========== */
+.top-nav {
+  background: rgba(8, 8, 9, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.top-nav-link {
+  padding: 0.45rem 0.85rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-soft);
+  transition: background 0.18s ease, color 0.18s ease;
+  white-space: nowrap;
+}
+
+.top-nav-link:hover {
+  background: color-mix(in srgb, var(--primary) 9%, transparent);
+  color: var(--text);
+}
+
+.top-nav-link-active {
+  background: color-mix(in srgb, var(--primary) 13%, transparent);
+  color: var(--text);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 22%, transparent);
+}
+
+/* ========== Hero section ========== */
+.hero-section {
+  /* subtle paper texture via repeating gradient */
+  background-image:
+    radial-gradient(circle at 18% 28%, color-mix(in srgb, var(--primary) 6%, transparent) 0%, transparent 55%),
+    radial-gradient(circle at 82% 72%, color-mix(in srgb, var(--blue) 5%, transparent) 0%, transparent 55%);
+}
+
+/* ========== Floating badges ========== */
+.floating-badge {
+  position: absolute;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
+  background: var(--bg-card);
+  padding: 8px 12px;
+  box-shadow: var(--shadow-soft);
+  animation: badge-float 3.5s ease-in-out infinite alternate;
+}
+
+.badge-top-left {
+  top: 12%;
+  left: -10px;
+  animation-delay: 0s;
+}
+
+.badge-top-right {
+  top: 8%;
+  right: -10px;
+  animation-delay: 0.8s;
+}
+
+.badge-bottom-left {
+  bottom: 22%;
+  left: -14px;
+  animation-delay: 1.6s;
+}
+
+@keyframes badge-float {
+  from { transform: translateY(0px); }
+  to   { transform: translateY(-8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-badge { animation: none; }
+}
+
+/* ========== Hero fullscreen ========== */
+.hero-fullscreen {
+  min-height: calc(100dvh - 60px);
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-fullscreen > .relative.z-10 {
+  flex: 1;
 }

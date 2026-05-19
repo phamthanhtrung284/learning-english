@@ -66,7 +66,7 @@ export default function WordTooltip({
   return (
     <div className="tooltip-glass tooltip-pop-in relative w-[min(calc(100vw-2rem),360px)]">
       <div
-        className="h-1 w-full rounded-t-[28px]"
+        className="h-0.5 w-full rounded-t-[28px]"
         style={{ background: "var(--gradient-primary)" }}
         aria-hidden
       />
@@ -77,7 +77,7 @@ export default function WordTooltip({
               {word}
             </h2>
             {showBody && (pos || "").trim() && (
-              <span className="mt-2 inline-flex items-center rounded-full border border-[var(--border)] bg-[color-mix(in_srgb,var(--primary)_12%,transparent)] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[var(--primary)]">
+              <span className="mt-2 inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--bg-soft)] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[var(--primary)]">
                 {pos}
               </span>
             )}
@@ -86,7 +86,7 @@ export default function WordTooltip({
           <button
             type="button"
             onClick={handleSpeak}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[color-mix(in_srgb,var(--primary)_10%,transparent)] text-[var(--primary)] shadow-[var(--shadow-soft)] transition hover:scale-105 active:scale-95"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text)] shadow-[var(--shadow-soft)] transition hover:border-[color-mix(in_srgb,var(--primary)_25%,transparent)] active:scale-95"
             aria-label="Play pronunciation"
           >
             <svg
@@ -103,7 +103,7 @@ export default function WordTooltip({
 
         <div className="mt-4 space-y-3">
           {lookupLoading && (
-            <div className="space-y-3 rounded-[18px] border border-[var(--border)] bg-[color-mix(in_srgb,var(--bg-soft)_80%,transparent)] p-4">
+            <div className="space-y-3 rounded-[18px] border border-[var(--border)] bg-[var(--bg-card)] p-4">
               <SkeletonLine className="h-3 w-24" />
               <SkeletonLine className="h-5 w-full" />
               <SkeletonLine className="mt-3 h-3 w-16" />
@@ -133,8 +133,8 @@ export default function WordTooltip({
 
           {showBody && (
             <>
-              <section className="rounded-2xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--green)_8%,var(--bg-soft))] p-4">
-                <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--text-soft)]">
+              <section className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-soft)]">
                   Nghĩa (VI)
                 </div>
                 <p className="mt-1.5 text-[16px] font-semibold leading-snug text-[var(--text)]">
@@ -142,8 +142,8 @@ export default function WordTooltip({
                 </p>
               </section>
 
-              <section className="rounded-2xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--blue)_8%,var(--bg-soft))] p-4">
-                <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--text-soft)]">
+              <section className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-soft)]">
                   IPA
                 </div>
                 <p className="mt-1.5 font-mono text-[15px] tracking-wide text-[var(--text)]">
@@ -151,11 +151,11 @@ export default function WordTooltip({
                 </p>
               </section>
 
-              <section className="rounded-2xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--pink)_6%,var(--bg-soft))] p-4">
-                <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--text-soft)]">
+              <section className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-soft)]">
                   Định nghĩa (EN)
                 </div>
-                <p className="mt-1.5 text-sm leading-relaxed text-[var(--text-soft)]">
+                <p className="mt-1.5 text-sm leading-relaxed text-[color-mix(in_srgb,var(--text)_70%,var(--text-soft))]">
                   {(explanation || "").trim() || "No definition available."}
                 </p>
               </section>
@@ -170,7 +170,7 @@ export default function WordTooltip({
             disabled={saveLoading || saved || !canSave}
             className={`mt-5 w-full rounded-[18px] py-3.5 text-sm font-bold transition-all active:scale-[0.98] ${
               saved
-                ? "border border-[var(--green)] bg-[color-mix(in_srgb,var(--green)_22%,transparent)] text-[var(--text)]"
+                ? "border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text)]"
                 : "text-white shadow-md hover:brightness-110"
             } ${saveLoading || !canSave ? "pointer-events-none opacity-45" : ""}`}
             style={!saved ? { background: "var(--gradient-primary)" } : undefined}

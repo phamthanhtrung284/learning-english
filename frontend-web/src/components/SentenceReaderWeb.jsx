@@ -11,10 +11,10 @@ export default function SentenceReaderWeb({ data }) {
         </p>
         {posList.length > 0 && (
           <div className="relative mt-4 flex flex-wrap gap-2">
-            {posList.map((p, i) => (
+            {posList.map((p) => (
               <span
                 key={p}
-                className="rounded-full border border-[var(--border)] bg-[color-mix(in_srgb,var(--bg-card)_70%,transparent)] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[var(--text)]"
+                className="rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[var(--text)]"
               >
                 {p}
               </span>

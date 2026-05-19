@@ -79,3 +79,28 @@ export const getVocabulary = async (
   }
 
 };
+
+export const deleteWord = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ success: false, message: "id is required" });
+    }
+
+    const removed = await UserWord.findOneAndDelete({
+      _id: id,
+      userId: req.user.id,
+    });
+
+    if (!removed) {
+      return res.status(404).json({ success: false, message: "Word not found" });
+    }
+
+    res.json({ success: true, id: removed._id });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

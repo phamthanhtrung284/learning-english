@@ -36,6 +36,12 @@ const userSchema =
       type: String,
       required: true,
     },
+
+    // Admin dashboard quyền quản trị (CRUD truyện, import PDF, v.v.)
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   {

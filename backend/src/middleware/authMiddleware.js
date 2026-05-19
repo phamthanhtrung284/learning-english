@@ -46,6 +46,13 @@ export const protect =
         decoded.id
       ).select("-password");
 
+    // Token hợp lệ nhưng user không còn tồn tại (ví dụ: user bị xoá)
+    if (!req.user) {
+      return res.status(401).json({
+        error: "User not found",
+      });
+    }
+
     next();
 
   } catch (error) {
@@ -55,4 +62,9 @@ export const protect =
         "Token invalid"
     });
   }
+};
+
+export const adminOnly = (req, res, next) => {
+  if (req.user?.isAdmin) return next();
+  return res.status(403).json({ error: "Admin only" });
 };

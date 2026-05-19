@@ -1,5 +1,3 @@
-import React from "react";
-
 function baseProps(props) {
   return {
     viewBox: "0 0 24 24",
@@ -149,4 +147,3 @@ export function IconMoon(props) {
     </svg>
   );
 }
-

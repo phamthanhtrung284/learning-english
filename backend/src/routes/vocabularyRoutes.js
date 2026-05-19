@@ -2,7 +2,8 @@ import express from "express";
 
 import {
   saveWord,
-  getVocabulary
+  getVocabulary,
+  deleteWord
 } from "../controllers/vocabularyController.js";
 
 import {
@@ -21,6 +22,12 @@ router.get(
   "/list",
   protect,
   getVocabulary
+);
+
+router.delete(
+  "/:id",
+  protect,
+  deleteWord
 );
 
 export default router;

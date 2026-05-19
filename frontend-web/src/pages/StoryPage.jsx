@@ -197,7 +197,7 @@ function StoryPage() {
                     key={paragraphIndex}
 
                     className="
-                      bg-slate-900/70
+                      bg-slate-900
 
                       p-8
 
@@ -205,8 +205,6 @@ function StoryPage() {
 
                       border
                       border-slate-800
-
-                      backdrop-blur
                     "
                   >
 
@@ -260,10 +258,10 @@ function StoryPage() {
                       className="
                         mt-8
 
-                        bg-green-500/10
+                        bg-green-950
 
                         border
-                        border-green-500/20
+                        border-green-800
 
                         rounded-2xl
 

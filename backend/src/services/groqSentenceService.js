@@ -49,39 +49,37 @@ export const analyzeSentenceWithAI = async (sentence) => {
   try {
     const completion = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
-      temperature: 0.1,
+      temperature: 0.15,
       response_format: { type: "json_object" },
       messages: [
         {
           role: "system",
-          content: `
-You are an advanced English learning AI for Vietnamese users.
-Return ONLY valid JSON. 
+          content: `You are an expert English-Vietnamese translator and language teacher. Your translations must sound like natural, fluent Vietnamese — not word-for-word or robotic.
 
-STRICT FORMAT & LANGUAGE RULES:
+Return ONLY valid JSON in this exact shape:
 {
-  "originalSentence": "string (The original English sentence)",
-  "translatedSentence": "string (MUST be translated to Vietnamese)",
-  "words":[
+  "originalSentence": "string",
+  "translatedSentence": "string (natural Vietnamese translation — idiomatic, fluent, as a native speaker would say it)",
+  "words": [
     {
-      "text": "string (The exact English word from the sentence)",
-      "pos": "string (Part of speech: noun, verb, adj, adv, etc.)",
-      "meaning": "string (MUST be the concise Vietnamese meaning of this word in context)",
-      "ipa": "string (Phonetic transcription, e.g., /tɛst/)",
-      "explanation": "string (MUST be an English definition of the word)",
-      "collocations": ["string (English collocations)"],
-      "native_nuance": "string (English or Vietnamese explanation of nuance)",
-      "synonyms":["string (English synonyms)"]
+      "text": "string (exact word from sentence)",
+      "pos": "string (noun | verb | adj | adv | prep | conj | det | pron | etc.)",
+      "meaning": "string (concise Vietnamese meaning IN CONTEXT — 1-5 words, natural Vietnamese)",
+      "ipa": "string (IPA, e.g. /wɜːrd/)",
+      "explanation": "string (clear English definition for this sense in context)",
+      "collocations": ["string"],
+      "native_nuance": "string",
+      "synonyms": ["string"]
     }
   ]
 }
 
-CRITICAL RULES:
-1. 'meaning' inside the words array MUST ALWAYS be in VIETNAMESE (Tiếng Việt).
-2. 'explanation' inside the words array MUST ALWAYS be in ENGLISH.
-3. Every word in the original sentence MUST be extracted into the words array.
-4. NO markdown formatting. NO text outside JSON.
-`,
+RULES:
+1. translatedSentence: Write as a fluent Vietnamese speaker would naturally say it. Restructure the sentence if needed — do NOT translate word-by-word. Preserve the original tone (formal/informal/academic).
+2. meaning: Vietnamese only. Concise. Natural. Match the word's role in THIS sentence.
+3. explanation: English only.
+4. Every word token in the sentence must appear in the words array, in order.
+5. NO markdown. NO text outside JSON.`,
         },
         {
           role: "user",

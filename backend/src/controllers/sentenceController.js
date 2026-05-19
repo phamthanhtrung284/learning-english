@@ -9,6 +9,9 @@ export const analyzeSentence =
   async (req, res) => {
 
     try {
+      if (!req.user?.id) {
+        return res.status(401).json({ error: "Not authorized" });
+      }
 
       const {
         sentence,
