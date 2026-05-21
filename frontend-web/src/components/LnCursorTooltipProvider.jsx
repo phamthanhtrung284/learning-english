@@ -312,10 +312,23 @@ export function LnCursorTooltipProvider({ children }) {
     }
   }, [cancelPending, closeNow, runLookup]);
 
-  // move / leave are no-ops now (click-based), kept for API compat
+  // move / leave are no-ops (click-based), kept for API compat
   const move = useCallback(() => {}, []);
   const leave = useCallback(() => {}, []);
   const cancelHide = useCallback(() => {}, []);
+
+  // Click outside the panel → close
+  useEffect(() => {
+    if (!layer.open) return;
+    const handler = (e) => {
+      const panel = document.querySelector(".ln-side-panel");
+      if (panel && panel.contains(e.target)) return;
+      if (e.target.closest?.("[data-ln-word]")) return;
+      closeNow();
+    };
+    document.addEventListener("pointerdown", handler, true);
+    return () => document.removeEventListener("pointerdown", handler, true);
+  }, [layer.open, closeNow]);
 
   const handleSave = useCallback(async () => {
     const s = layerRef.current;

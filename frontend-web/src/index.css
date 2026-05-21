@@ -810,9 +810,9 @@ body {
 /* ========== LN Reader — side panel layout ========== */
 
 /*
-  Panel is OVERLAID on top of the reader (absolute/fixed), NOT pushing text.
-  On mobile: bottom sheet.
-  On desktop: fixed panel anchored to the left edge of the reader frame.
+  Panel dùng position: fixed neo vào viewport.
+  Không bị ảnh hưởng bởi scroll của reader container.
+  Mobile: bottom sheet. Desktop: fixed left panel.
 */
 
 .ln-reader-with-panel {
@@ -839,12 +839,12 @@ body {
     left: 0;
     right: 0;
     z-index: 200;
-    max-height: 55dvh;
+    max-height: 60dvh;
     border-radius: 22px 22px 0 0;
     border: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
     border-bottom: none;
     background: var(--bg-card);
-    box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.32);
+    box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.45);
     animation: panel-slide-up 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
     overflow: hidden;
   }
@@ -855,62 +855,113 @@ body {
   }
 }
 
-/* ── Desktop: absolute overlay, left side of reader, does NOT push text ── */
+/* ── Desktop: fixed to viewport, right side, below navbar ── */
 @media (min-width: 768px) {
-  .ln-side-panel {
-    display: none;
-  }
-
   .ln-panel-open .ln-side-panel {
     display: flex;
     flex-direction: column;
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 50;
-    width: 240px;
-    max-height: calc(100dvh - 120px);
+    position: fixed;
+    top: calc(clamp(60px, 14.47vw, 100px) + 12px);
+    right: 12px;
+    left: auto;
+    z-index: 100;
+    width: 252px;
+    max-height: calc(100dvh - clamp(60px, 14.47vw, 100px) - 24px);
     border-radius: 20px;
     border: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
     background: var(--bg-card);
-    box-shadow: var(--shadow-card), 0 0 0 1px color-mix(in srgb, var(--border) 60%, transparent);
+    box-shadow: var(--shadow-card), 0 0 0 1px color-mix(in srgb, var(--border) 55%, transparent);
     overflow: hidden;
     animation: panel-slide-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
-    /* Sticky within scroll container */
-    position: sticky;
-    top: 16px;
-    align-self: flex-start;
-    /* Override: use absolute overlay approach */
-    position: absolute;
   }
 
   @keyframes panel-slide-in {
-    from { opacity: 0; transform: translateX(-8px) scale(0.98); }
+    from { opacity: 0; transform: translateX(10px) scale(0.97); }
     to   { opacity: 1; transform: translateX(0) scale(1); }
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1280px) {
   .ln-panel-open .ln-side-panel {
-    width: 260px;
+    width: 272px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .ln-side-panel {
     animation: none !important;
-    transition: none !important;
   }
 }
 
-/* ========== Top Navigation Bar — Berserk dark ========== */
-.top-nav {
-  background: rgba(8, 8, 9, 0.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 4px 20px rgba(0,0,0,0.5);
+/* ========== Sword Navigation Bar ========== */
+.sword-nav {
+  background-color: var(--bg);
+  border-bottom: none;
+  /* Tỉ lệ ảnh: 250/1727 = 14.47vw. Giới hạn 60-100px để không quá cao */
+  height: clamp(60px, 14.47vw, 100px) !important;
+  transition: background-color 0.25s ease;
 }
+
+.sword-nav-bg {
+  /* SVG fills full header */
+}
+
+.sword-brand {
+  transition: opacity 0.18s ease;
+}
+.sword-brand:hover { opacity: 0.85; }
+
+.sword-nav-link {
+  position: relative;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #c8c8d0;
+  letter-spacing: 0.03em;
+  transition: color 0.18s ease;
+  font-family: 'Cinzel', 'DM Sans', serif;
+  white-space: nowrap;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.8);
+}
+
+.sword-nav-link:hover {
+  color: #ffffff;
+}
+
+.sword-nav-link[data-active] {
+  color: #ffffff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(255,255,255,0.2);
+}
+
+.sword-nav-underline {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 2px;
+  background: linear-gradient(90deg, #c0392b, #e74c3c);
+  border-radius: 2px;
+  box-shadow: 0 0 6px rgba(192,57,43,0.6);
+}
+
+.sword-nav-admin {
+  position: relative;
+  padding: 0.25rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #ede9e0;
+  letter-spacing: 0.04em;
+  font-family: 'Cinzel', 'DM Sans', serif;
+  background: linear-gradient(135deg, #c0392b 0%, #8b0000 100%);
+  border-radius: 5px;
+  clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
+  transition: filter 0.18s ease;
+  box-shadow: 0 2px 10px rgba(192,57,43,0.35);
+}
+
+.sword-nav-admin:hover { filter: brightness(1.15); }
+.sword-nav-admin[data-active] { filter: brightness(1.2); }
 
 .top-nav-link {
   padding: 0.45rem 0.85rem;
@@ -991,4 +1042,29 @@ body {
 
 .hero-fullscreen > .relative.z-10 {
   flex: 1;
+}
+
+/* ========== Custom scrollbar ========== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--text-soft) 35%, transparent);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--text-soft) 55%, transparent);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--text-soft) 35%, transparent) transparent;
 }

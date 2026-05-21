@@ -8,6 +8,102 @@ import {
   exportVocabularyCsv,
 } from "../utils/vocabularyExport";
 
+// ── Poster card (Netflix style) ───────────────────────────────────────────────
+function SeriesPoster({ series, openingChapterId, onSelectChapter, setOpeningChapterId }) {
+  const [hover, setHover] = useState(false);
+  const BACKEND = import.meta.env.VITE_API_URL?.replace("/api", "") || "http://localhost:5000";
+
+  const coverSrc = series.coverImage
+    ? `${BACKEND}${series.coverImage}`
+    : null;
+
+  const openFirstChapter = async () => {
+    const ch = series.chapters?.[0];
+    if (!ch) return;
+    if (ch.chapter) return onSelectChapter(ch.chapter);
+    if (!ch.chapterId) return;
+    try {
+      setOpeningChapterId(ch.chapterId);
+      const { data } = await api.get(`/library/chapters/${ch.chapterId}`);
+      onSelectChapter(data);
+    } catch (e) {
+      alert(e?.response?.data?.error || e?.message || "Không mở được chapter");
+    } finally {
+      setOpeningChapterId(null);
+    }
+  };
+
+  const isLoading = series.chapters?.some(
+    (ch) => openingChapterId && ch.chapterId === openingChapterId
+  );
+
+  return (
+    <div
+      className="group relative cursor-pointer select-none"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      onClick={openFirstChapter}
+    >
+      {/* Poster image */}
+      <div
+        className="relative overflow-hidden rounded-lg transition-transform duration-200"
+        style={{
+          aspectRatio: "2/3",
+          transform: hover ? "scale(1.04)" : "scale(1)",
+          boxShadow: hover
+            ? "0 12px 32px rgba(0,0,0,0.7)"
+            : "0 4px 12px rgba(0,0,0,0.4)",
+        }}
+      >
+        {coverSrc ? (
+          <img
+            src={coverSrc}
+            alt={series.displayTitle}
+            className="h-full w-full object-cover"
+            draggable={false}
+          />
+        ) : (
+          /* Fallback gradient + emoji khi chưa có ảnh */
+          <div className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${series.accent || "from-slate-600 to-slate-800"}`}>
+            <span className="text-4xl">{series.coverEmoji || "📚"}</span>
+          </div>
+        )}
+
+        {/* Overlay khi hover */}
+        <div
+          className="absolute inset-0 flex items-end bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-200"
+          style={{ opacity: hover ? 1 : 0 }}
+        >
+          <div className="w-full p-3">
+            <div className="flex items-center justify-center gap-1.5 rounded-md bg-white/90 py-1.5 text-xs font-bold text-black">
+              {isLoading ? "Đang mở…" : "▶ Đọc ngay"}
+            </div>
+          </div>
+        </div>
+
+        {/* Badge số chapter */}
+        {series.chapters?.length > 0 && (
+          <div className="absolute right-1.5 top-1.5 rounded bg-black/70 px-1.5 py-0.5 text-[10px] font-bold text-white">
+            {series.chapters.length} ch.
+          </div>
+        )}
+      </div>
+
+      {/* Tên bên dưới */}
+      <div className="mt-2 px-0.5">
+        <p className="truncate text-[12px] font-semibold leading-tight text-[var(--text)]">
+          {series.displayTitle}
+        </p>
+        {series.author && (
+          <p className="mt-0.5 truncate text-[11px] text-[var(--text-soft)]">
+            {series.author}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function LightNovelLibrary({
   chapter,
   onSelectChapter,
@@ -152,7 +248,7 @@ export default function LightNovelLibrary({
         className={`ln-studio ln-studio-ui relative flex h-full min-h-0 flex-1 flex-col text-[var(--text)] ${zenShell}`}
         style={!zenMode ? { background: "transparent" } : undefined}
       >
-        <div className="relative flex min-h-0 flex-1 flex-col px-3 pb-3 pt-3 sm:px-4 sm:pb-4 md:px-6 md:pb-6">
+        <div className={`relative flex min-h-0 flex-1 flex-col px-3 pt-3 sm:px-4 sm:pt-4 md:px-6 md:pt-6 ${zenMode ? "pb-0" : "pb-3 sm:pb-4 md:pb-6"}`}>
           <div className="glass-frame flex min-h-0 flex-1 flex-col overflow-hidden p-3 sm:p-4 md:p-5">
             {!zenMode && (
               <div className="z-40 shrink-0">
@@ -237,7 +333,7 @@ export default function LightNovelLibrary({
               ref={scrollerRef}
               className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain"
             >
-              <div className="mx-auto w-full max-w-[840px] px-3 py-8 sm:px-6 md:py-10">
+              <div className="mx-auto w-full max-w-[840px] px-3 py-8 pb-[calc(5rem+env(safe-area-inset-bottom))] sm:px-6 md:py-10 md:pb-10">
                 <LnChapterView chapter={chapter} zenMode={zenMode} nightMode={nightMode} scrollerRef={scrollerRef} />
               </div>
             </div>
@@ -251,11 +347,13 @@ export default function LightNovelLibrary({
     // server series trước
     ...remoteSeries.map((s) => ({
       id: `remote-${s.id}`,
+      _id: s.id,
       displayTitle: s.displayTitle,
       author: s.author,
       tagline: s.tagline,
       accent: s.accent,
       coverEmoji: s.coverEmoji,
+      coverImage: s.coverImage || "",
       chapters: (s.chapters || []).map((ch) => ({
         id: `remote-ch-${ch.id}`,
         label: ch.label || ch.chapterTitle || "Chapter",
@@ -269,85 +367,32 @@ export default function LightNovelLibrary({
 
   return (
     <div className="ln-studio ln-studio-ui mx-auto w-full max-w-6xl px-4 pb-16 pt-6 text-[var(--text)] sm:px-8 md:px-10 md:pt-10">
-      <header className="surface-panel relative mb-10 overflow-hidden p-8 md:p-10">
-        <p className="font-mascot relative text-xs font-bold uppercase tracking-[0.18em] text-[var(--primary)]">
-          Reading
-        </p>
-        <h1 className="font-display relative mt-4 text-3xl font-extrabold tracking-tight md:text-[2.5rem]">
+      <header className="mb-8">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--primary)]">Reading</p>
+        <h1 className="font-display mt-2 text-3xl font-extrabold tracking-tight md:text-[2.5rem]">
           Light novel library
         </h1>
-        <p className="relative mt-4 max-w-2xl text-[15px] leading-relaxed text-[var(--text-soft)] md:text-[17px]">
+        <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-[var(--text-soft)]">
           Hover a word to see meaning. Double-click a sentence to highlight grammar lightly.
         </p>
-        {remoteLoading ? (
-          <p className="relative mt-3 text-xs font-semibold text-[var(--text-soft)]">
-            Đang tải truyện từ server…
-          </p>
-        ) : remoteError ? (
-          <p className="relative mt-3 text-xs font-semibold text-[color-mix(in_srgb,#ef4444_70%,var(--text-soft))]">
-            {remoteError}
-          </p>
-        ) : null}
+        {remoteLoading && (
+          <p className="mt-2 text-xs font-semibold text-[var(--text-soft)]">Đang tải…</p>
+        )}
+        {remoteError && (
+          <p className="mt-2 text-xs font-semibold text-red-400">{remoteError}</p>
+        )}
       </header>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Poster grid — kiểu Netflix */}
+      <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
         {seriesList.map((series) => (
-          <article
+          <SeriesPoster
             key={series.id}
-            className="group surface-panel card-hover relative flex flex-col overflow-hidden"
-          >
-            <div className={`relative h-32 bg-gradient-to-br ${series.accent} opacity-90`} aria-hidden>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/15 to-transparent" />
-            </div>
-            <div className="absolute left-5 top-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-white/40 bg-[var(--bg-card)] text-3xl shadow-[var(--shadow-soft)]">
-              {series.coverEmoji}
-            </div>
-            <div className="relative flex flex-1 flex-col p-6 pt-7">
-              <h2 className="font-display text-lg font-extrabold leading-snug text-[var(--text)] md:text-xl">
-                {series.displayTitle}
-              </h2>
-              <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-[var(--text-soft)]">
-                {series.author}
-              </p>
-              <p className="mt-3 flex-1 text-[14px] leading-relaxed text-[var(--text-soft)]">
-                {series.tagline}
-              </p>
-              <div className="mt-6 space-y-2">
-                {series.chapters.map((ch) => (
-                  <button
-                    key={ch.id}
-                    type="button"
-                    disabled={Boolean(openingChapterId && ch.chapterId === openingChapterId)}
-                    onClick={async () => {
-                      if (ch.chapter) return onSelectChapter(ch.chapter);
-                      if (!ch.chapterId) return;
-                      try {
-                        setOpeningChapterId(ch.chapterId);
-                        const { data } = await api.get(`/library/chapters/${ch.chapterId}`);
-                        onSelectChapter(data);
-                      } catch (e) {
-                        alert(
-                          e?.response?.data?.error ||
-                            e?.message ||
-                            "Không mở được chapter"
-                        );
-                      } finally {
-                        setOpeningChapterId(null);
-                      }
-                    }}
-                    className="w-full rounded-2xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--bg-soft)_90%,transparent)] px-4 py-3 text-left text-sm font-semibold text-[var(--text)] transition hover:border-[color-mix(in_srgb,var(--primary)_40%,transparent)] active:scale-[0.99]"
-                  >
-                    {openingChapterId && ch.chapterId === openingChapterId
-                      ? "Đang mở…"
-                      : ch.label}
-                  </button>
-                ))}
-              </div>
-              <p className="mt-5 text-center text-[11px] font-medium text-[var(--text-soft)]">
-                Vol.1 — thêm chương sau
-              </p>
-            </div>
-          </article>
+            series={series}
+            openingChapterId={openingChapterId}
+            onSelectChapter={onSelectChapter}
+            setOpeningChapterId={setOpeningChapterId}
+          />
         ))}
       </div>
     </div>

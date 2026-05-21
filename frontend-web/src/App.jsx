@@ -9,8 +9,6 @@ import {
 } from "react-router-dom";
 import api from "./services/api";
 import LoginPage from "./pages/LoginPage";
-import ThemeSwitcher from "./components/ThemeSwitcher";
-import { readStoredTheme, writeStoredTheme } from "./utils/themeStorage";
 import {
   IconBook,
   IconHome,
@@ -23,7 +21,6 @@ import {
 const LearningHub       = lazy(() => import("./pages/LearningHub.jsx"));
 const LightNovelLibrary = lazy(() => import("./components/LightNovelLibrary.jsx"));
 const VocabularyNotebook = lazy(() => import("./pages/VocabularyNotebook.jsx"));
-const Leaderboard       = lazy(() => import("./pages/Leaderboard.jsx"));
 const EditProfile       = lazy(() => import("./pages/EditProfile.jsx"));
 const SentenceReaderWeb = lazy(() => import("./components/SentenceReaderWeb.jsx"));
 const AdminLibrary      = lazy(() => import("./pages/AdminLibrary.jsx"));
@@ -41,8 +38,8 @@ function readProfile() {
   catch { return {}; }
 }
 
-// ── Top Navbar ────────────────────────────────────────────────────────────────
-function TopNav({ profile, onLogout, uiTheme, setUiTheme }) {
+// ── Sword Navbar ──────────────────────────────────────────────────────────────
+function TopNav({ profile, onLogout }) {
   const navigate  = useNavigate();
   const location  = useLocation();
   const path      = location.pathname;
@@ -62,105 +59,76 @@ function TopNav({ profile, onLogout, uiTheme, setUiTheme }) {
   }, []);
 
   const navLinks = [
-    { label: "Home",      path: "/",           icon: <IconHome /> },
-    { label: "Analyze",   path: "/analyze",    icon: <IconSparkles /> },
-    { label: "Read",      path: "/read",       icon: <IconBook /> },
-    { label: "Notebook",  path: "/notebook",   icon: <IconNotebook /> },
-    { label: "Rank",      path: "/leaderboard",icon: "🏆" },
+    { label: "Home",     path: "/" },
+    { label: "Analyze",  path: "/analyze" },
+    { label: "Read",     path: "/read" },
+    { label: "Notebook", path: "/notebook" },
   ];
 
   const isActive = (p) => p === "/" ? path === "/" : path.startsWith(p);
 
   return (
-    <header className="top-nav sticky top-0 z-30 w-full">
-      <div className="mx-auto flex h-[60px] max-w-7xl items-center gap-2 px-4 md:px-6 lg:px-8">
+    <header className="sword-nav sticky top-0 z-30 hidden w-full md:block" style={{ height: 72 }}>
+      <div className="relative h-full w-full">
 
-        {/* Brand */}
-        <button
-          type="button"
-          onClick={() => navigate("/")}
-          className="flex shrink-0 items-center gap-2.5 mr-4"
+        {/* Kiếm: giữ nguyên tỉ lệ, căn giữa màn hình */}
+        <img
+          src="/sword.png"
+          alt=""
+          draggable={false}
+          className="pointer-events-none absolute top-0 select-none"
+          style={{ height: "100%", width: "auto", left: "50%", transform: "translateX(-50%)" }}
+          aria-hidden
+        />
+
+        {/* Nav links đè lên blade đen — căn theo vị trí blade trong ảnh đã center
+            Blade center ≈ 190px từ trái ảnh → offset từ center màn = -190px + 80px = -110px
+            Dùng left: calc(50% - 110px) để pin vào blade */}
+        <nav
+          className="absolute hidden md:flex items-center gap-1"
+          style={{ left: "calc(50% - 247px)", top: "50%", transform: "translateY(-50%)" }}
+          aria-label="Main"
         >
-          <div
-            className="flex h-9 w-9 items-center justify-center rounded-[12px] text-[11px] font-extrabold tracking-wider text-white shadow-[var(--shadow-soft)]"
-            style={{ background: "var(--gradient-primary)" }}
-          >
-            LQ
-          </div>
-          <span className="hidden font-display text-[15px] font-extrabold tracking-tight text-[var(--text)] sm:block">
-            Learning Quest
-          </span>
-        </button>
-
-        {/* Desktop nav links */}
-        <nav className="hidden md:flex items-center gap-1 flex-1" aria-label="Main">
           {navLinks.map((l) => (
-            <button
-              key={l.path}
-              type="button"
-              onClick={() => navigate(l.path)}
-              className={`top-nav-link ${isActive(l.path) ? "top-nav-link-active" : ""}`}
-            >
+            <button key={l.path} type="button" onClick={() => navigate(l.path)}
+              className="sword-nav-link" data-active={isActive(l.path) ? "true" : undefined}>
               {l.label}
+              {isActive(l.path) && <span className="sword-nav-underline" />}
             </button>
           ))}
           {profile?.isAdmin && (
-            <button
-              type="button"
-              onClick={() => navigate("/admin")}
-              className={`top-nav-link ${isActive("/admin") ? "top-nav-link-active" : ""}`}
-            >
+            <button type="button" onClick={() => navigate("/admin")}
+              className="sword-nav-admin" data-active={isActive("/admin") ? "true" : undefined}>
               Admin
             </button>
           )}
         </nav>
 
-        {/* Right side */}
-        <div className="ml-auto flex items-center gap-2">
-          {/* Theme switcher — compact on desktop */}
-          <div className="hidden md:block">
-            <ThemeSwitcher themeId={uiTheme} onChange={setUiTheme} />
-          </div>
-
-          {/* Avatar / user menu */}
-          <div className="relative" ref={menuRef}>
-            <button
-              type="button"
-              onClick={() => setMenuOpen((o) => !o)}
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)] text-sm font-bold text-[var(--text)] shadow-[var(--shadow-soft)] transition hover:border-[color-mix(in_srgb,var(--primary)_35%,transparent)]"
-              aria-label="User menu"
-            >
-              {initial}
-            </button>
-
-            {menuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-[18px] border border-[var(--border)] bg-[var(--bg-card)] py-1.5 shadow-[var(--shadow-card)]">
-                <div className="border-b border-[var(--border)] px-4 py-3">
-                  <p className="font-display text-sm font-bold text-[var(--text)] truncate">{displayName}</p>
-                  <p className="text-xs text-[var(--text-soft)] truncate">{profile?.email || ""}</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => { navigate("/profile"); setMenuOpen(false); }}
-                  className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-[var(--text)] hover:bg-[color-mix(in_srgb,var(--primary)_6%,transparent)]"
-                >
-                  <span className="text-[16px]"><IconSettings /></span> Edit profile
-                </button>
-                <div className="px-3 py-2 md:hidden">
-                  <ThemeSwitcher themeId={uiTheme} onChange={setUiTheme} />
-                </div>
-                <div className="border-t border-[var(--border)] mt-1 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => { onLogout(); setMenuOpen(false); }}
-                    className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-red-500 hover:bg-[color-mix(in_srgb,#ef4444_6%,transparent)]"
-                  >
-                    <span className="text-[16px]"><IconLogout /></span> Đăng xuất
-                  </button>
-                </div>
+        {/* Theme + Avatar sát phải */}
+        <div className="absolute right-0 top-0 flex h-full items-center gap-3 px-5" ref={menuRef}>
+          <button type="button" onClick={() => setMenuOpen((o) => !o)}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-[#2a2a2e] text-sm font-bold text-[#ede9e0] transition hover:border-white/40"
+            aria-label="User menu">
+            {initial}
+          </button>
+          {menuOpen && (
+            <div className="absolute right-4 top-full mt-2 z-50 w-52 overflow-hidden rounded-[16px] border border-white/10 bg-[#1a1a1e] py-1.5 shadow-[0_16px_48px_rgba(0,0,0,0.7)]">
+              <div className="border-b border-white/8 px-4 py-3">
+                <p className="text-sm font-bold text-[#ede9e0] truncate">{displayName}</p>
+                <p className="text-xs text-[#6b6860] truncate">{profile?.email || ""}</p>
               </div>
-            )}
-          </div>
+              <button type="button" onClick={() => { navigate("/profile"); setMenuOpen(false); }}
+                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-[#ede9e0] hover:bg-white/5">
+                <span className="text-[16px]"><IconSettings /></span> Edit profile
+              </button>
+              <div className="border-t border-white/8 mt-1 pt-1">
+                <button type="button" onClick={() => { onLogout(); setMenuOpen(false); }}
+                  className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-[#c0392b] hover:bg-[#c0392b]/8">
+                  <span className="text-[16px]"><IconLogout /></span> Sign out
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </header>
@@ -168,7 +136,7 @@ function TopNav({ profile, onLogout, uiTheme, setUiTheme }) {
 }
 
 // ── AppShell ──────────────────────────────────────────────────────────────────
-function AppShell({ onLogout, profile, setProfile, uiTheme, setUiTheme }) {
+function AppShell({ onLogout, profile, setProfile }) {
   const navigate  = useNavigate();
   const location  = useLocation();
   const path      = location.pathname;
@@ -195,7 +163,7 @@ function AppShell({ onLogout, profile, setProfile, uiTheme, setUiTheme }) {
   useEffect(() => { queueMicrotask(() => void refreshProfile()); }, [refreshProfile]);
 
   useEffect(() => {
-    const refreshPaths = ["/notebook", "/leaderboard", "/profile", "/admin"];
+    const refreshPaths = ["/notebook", "/profile", "/admin"];
     if (refreshPaths.some((p) => path.startsWith(p))) {
       queueMicrotask(() => void refreshProfile());
     }
@@ -217,7 +185,7 @@ function AppShell({ onLogout, profile, setProfile, uiTheme, setUiTheme }) {
   };
 
   const storyReading   = path.startsWith("/read") && Boolean(lnChapter);
-  const hideMobileDock = storyReading || lnZenMode;
+  const hideMobileDock = lnZenMode; // chỉ ẩn dock khi zen, không ẩn khi đọc thường
   const isRead         = path.startsWith("/read");
 
   const dockBtn = (active) =>
@@ -239,20 +207,24 @@ function AppShell({ onLogout, profile, setProfile, uiTheme, setUiTheme }) {
         <TopNav
           profile={profile}
           onLogout={onLogout}
-          uiTheme={uiTheme}
-          setUiTheme={setUiTheme}
         />
       )}
 
       {/* Main content */}
       <div
         className={
-          storyReading
-            ? "flex h-[calc(100dvh-60px)] max-h-[calc(100dvh-60px)] min-h-0 overflow-hidden"
-            : isRead
-              ? "flex min-h-[calc(100dvh-60px)] flex-col"
-              : ""
+          lnZenMode
+            ? "flex h-[100dvh] max-h-[100dvh] min-h-0 overflow-hidden"
+            : storyReading
+              ? "flex min-h-0 overflow-hidden" 
+              : isRead
+                ? "flex min-h-[calc(100dvh-clamp(60px,14.47vw,100px))] flex-col"
+                : ""
         }
+        style={storyReading && !lnZenMode ? {
+          height: "calc(100dvh - clamp(60px, 14.47vw, 100px))",
+          maxHeight: "calc(100dvh - clamp(60px, 14.47vw, 100px))",
+        } : undefined}
       >
         <main
           className={
@@ -262,7 +234,7 @@ function AppShell({ onLogout, profile, setProfile, uiTheme, setUiTheme }) {
                 ? "relative w-full overflow-hidden"
                 : "relative mx-auto w-full max-w-6xl px-4 py-6 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:px-6 md:py-8 md:pb-10 lg:px-8"
           }
-          style={path === "/" ? { height: "calc(100dvh - 60px)" } : undefined}
+          style={path === "/" ? { height: "calc(100dvh - clamp(60px, 14.47vw, 100px))" } : undefined}
         >
           {apiError && (
             <div
@@ -322,16 +294,13 @@ function AppShell({ onLogout, profile, setProfile, uiTheme, setUiTheme }) {
                     onSelectChapter={setLnChapter}
                     zenMode={lnZenMode}
                     onZenModeChange={setLnZenMode}
-                    nightMode={uiTheme === "night"}
+                    nightMode={false}
                   />
                 }
               />
 
               {/* Notebook */}
               <Route path="/notebook" element={<div className="surface-panel animate-fade-rise p-6 md:p-10"><VocabularyNotebook /></div>} />
-
-              {/* Leaderboard */}
-              <Route path="/leaderboard" element={<Leaderboard />} />
 
               {/* Profile */}
               <Route path="/profile" element={<EditProfile onProfileUpdated={(u) => setProfile(u)} />} />
@@ -363,7 +332,6 @@ function AppShell({ onLogout, profile, setProfile, uiTheme, setUiTheme }) {
             { path: "/analyze",    label: "Analyze", icon: <IconSparkles /> },
             { path: "/read",       label: "Read",    icon: <IconBook /> },
             { path: "/notebook",   label: "Words",   icon: <IconNotebook /> },
-            { path: "/leaderboard",label: "Rank",    icon: "🏆" },
           ].map((l) => (
             <button
               key={l.path}
@@ -383,15 +351,13 @@ function AppShell({ onLogout, profile, setProfile, uiTheme, setUiTheme }) {
 
 // ── Root ──────────────────────────────────────────────────────────────────────
 function App() {
-  const [uiTheme, setUiTheme] = useState(readStoredTheme);
   const [authed, setAuthed]   = useState(() => !!localStorage.getItem("token"));
   const [profile, setProfile] = useState(readProfile);
 
   useEffect(() => {
-    const dark = !authed || uiTheme === "night";
-    document.documentElement.classList.toggle("dark", dark);
-    if (authed) writeStoredTheme(uiTheme);
-  }, [uiTheme, authed]);
+    // Luôn dùng light theme — xóa class dark nếu còn sót
+    document.documentElement.classList.remove("dark");
+  }, []);
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -408,8 +374,6 @@ function App() {
         onLogout={logout}
         profile={profile}
         setProfile={setProfile}
-        uiTheme={uiTheme}
-        setUiTheme={setUiTheme}
       />
     </BrowserRouter>
   );

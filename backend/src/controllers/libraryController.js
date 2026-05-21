@@ -90,6 +90,7 @@ export async function listSeriesPublic(req, res) {
       tagline: s.tagline || "",
       accent: s.accent || "from-slate-500 via-slate-600 to-slate-700",
       coverEmoji: s.coverEmoji || "📚",
+      coverImage: s.coverImage || "",
       chapters: bySeries.get(String(s._id)) || [],
     }))
   );
@@ -129,6 +130,7 @@ export async function listSeriesAdmin(req, res) {
       tagline: s.tagline || "",
       accent: s.accent || "from-slate-500 via-slate-600 to-slate-700",
       coverEmoji: s.coverEmoji || "📚",
+      coverImage: s.coverImage || "",
       chapters: bySeries.get(String(s._id)) || [],
     }))
   );
@@ -253,6 +255,26 @@ export async function updateChapterAdmin(req, res) {
 
   await chapter.save();
   res.json({ ok: true });
+}
+
+export async function uploadSeriesCover(req, res) {
+  const { id } = req.params;
+  if (!req.file) return res.status(400).json({ error: "Image file is required" });
+
+  const series = await LibrarySeries.findById(id);
+  if (!series) return res.status(404).json({ error: "Series not found" });
+
+  // xóa ảnh cũ nếu có
+  if (series.coverImage) {
+    const oldPath = path.join(process.cwd(), series.coverImage.replace(/^\//, ""));
+    try { fs.unlinkSync(oldPath); } catch { /* ignore */ }
+  }
+
+  const relativePath = `/uploads/covers/${req.file.filename}`;
+  series.coverImage = relativePath;
+  await series.save();
+
+  res.json({ ok: true, coverImage: relativePath });
 }
 
 export async function deleteChapterAdmin(req, res) {

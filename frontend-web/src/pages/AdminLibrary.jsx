@@ -17,6 +17,7 @@ export default function AdminLibrary() {
 
   const [uploading, setUploading] = useState(false);
   const [file, setFile] = useState(null);
+  const [coverUploading, setCoverUploading] = useState(null); // seriesId đang upload cover
   const [form, setForm] = useState({
     seriesTitle: "",
     seriesAuthor: "",
@@ -192,6 +193,24 @@ export default function AdminLibrary() {
     }
   };
 
+  const handleCoverUpload = async (seriesId, imageFile) => {
+    if (!imageFile) return;
+    setCoverUploading(seriesId);
+    setErr("");
+    try {
+      const fd = new FormData();
+      fd.append("cover", imageFile);
+      await api.post(`/library/admin/series/${seriesId}/cover`, fd, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      await fetchAll();
+    } catch (e) {
+      setErr(e?.response?.data?.error || e?.message || "Upload cover failed");
+    } finally {
+      setCoverUploading(null);
+    }
+  };
+
   return (
     <div className="animate-fade-rise space-y-6 pb-10">
       <header className="surface-panel p-6 md:p-8">
@@ -336,6 +355,60 @@ export default function AdminLibrary() {
                 {uploading ? "Đang import…" : "Import PDF"}
               </button>
             </div>
+          </section>
+
+          <section className="surface-panel p-6 md:p-8">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="font-display text-lg font-extrabold text-[var(--text)]">Ảnh bìa series</h2>
+            </div>
+            <p className="mt-1 text-xs text-[var(--text-soft)]">Upload ảnh bìa (poster đứng, tỉ lệ 2:3 là đẹp nhất). Hỗ trợ JPG, PNG, WebP — tối đa 5MB.</p>
+            {loading ? (
+              <div className="mt-4 text-sm text-[var(--text-soft)]">Đang tải…</div>
+            ) : series.length ? (
+              <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {series.map((s) => {
+                  const BACKEND = import.meta.env.VITE_API_URL?.replace("/api", "") || "http://localhost:5000";
+                  const coverSrc = s.coverImage ? `${BACKEND}${s.coverImage}` : null;
+                  return (
+                    <div key={s.id} className="flex items-center gap-4 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-3">
+                      {/* Preview */}
+                      <div className="h-20 w-14 shrink-0 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-soft)]"
+                        style={{ aspectRatio: "2/3" }}>
+                        {coverSrc ? (
+                          <img src={coverSrc} alt="" className="h-full w-full object-cover" />
+                        ) : (
+                          <div className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${s.accent || "from-slate-600 to-slate-800"} text-2xl`}>
+                            {s.coverEmoji || "📚"}
+                          </div>
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-bold text-[var(--text)]">{s.displayTitle}</p>
+                        <label className="mt-2 block">
+                          <span className="sr-only">Chọn ảnh bìa</span>
+                          <input
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            className="block w-full text-xs text-[var(--text-soft)] file:mr-2 file:rounded-lg file:border file:border-[var(--border)] file:bg-[var(--bg-soft)] file:px-2.5 file:py-1.5 file:text-xs file:font-bold file:text-[var(--text)]"
+                            onChange={(e) => {
+                              const f = e.target.files?.[0];
+                              if (f) handleCoverUpload(s.id, f);
+                              e.target.value = "";
+                            }}
+                            disabled={coverUploading === s.id}
+                          />
+                        </label>
+                        {coverUploading === s.id && (
+                          <p className="mt-1 text-xs text-[var(--text-soft)]">Đang upload…</p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="mt-4 text-sm text-[var(--text-soft)]">Chưa có series nào.</div>
+            )}
           </section>
 
           <section className="surface-panel p-6 md:p-8">

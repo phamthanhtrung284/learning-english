@@ -113,9 +113,6 @@ export default function VocabularyNotebook() {
 
   const deleteOne = async (w) => {
     if (!w?._id) return;
-    const ok = window.confirm(`Xóa từ "${w.word}" khỏi sổ từ?`);
-    if (!ok) return;
-
     setDeletingId(w._id);
     const prev = words;
     setWords((cur) => cur.filter((x) => x._id !== w._id));
@@ -123,7 +120,6 @@ export default function VocabularyNotebook() {
       await api.delete(`/vocabulary/${w._id}`);
     } catch (error) {
       console.log(error);
-      alert(error?.response?.data?.message || error?.response?.data?.error || "Xóa thất bại");
       setWords(prev);
     } finally {
       setDeletingId(null);
@@ -212,12 +208,13 @@ export default function VocabularyNotebook() {
 
       {/* Table */}
       <div className="surface-panel mt-6 overflow-hidden">
-        <div className="hidden grid-cols-[1.2fr_1fr_2fr_0.9fr_0.6fr] gap-3 border-b border-[var(--border)] bg-[var(--surface-elevated)] px-5 py-3 text-xs font-bold uppercase tracking-wide text-[var(--text-soft)] md:grid">
-          <span>Từ</span>
-          <span>Phát âm</span>
-          <span>Nghĩa</span>
-          <span>Loại từ</span>
-          <span className="text-right">Xóa</span>
+        <div className="hidden grid-cols-[1.2fr_0.9fr_2fr_0.9fr_auto_auto] gap-3 border-b border-[var(--border)] bg-[var(--surface-elevated)] px-5 py-3 text-xs font-bold uppercase tracking-wide text-[var(--text-soft)] md:grid">
+          <span>Word</span>
+          <span>IPA</span>
+          <span>Meaning</span>
+          <span>Type</span>
+          <span>Audio</span>
+          <span className="text-right">Delete</span>
         </div>
 
         {loadingWords ? (
@@ -225,7 +222,7 @@ export default function VocabularyNotebook() {
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="grid gap-3 border-b border-[var(--border)] px-5 py-4 md:grid-cols-[1.2fr_1fr_2fr_0.9fr_0.6fr] md:items-center"
+                className="grid gap-3 border-b border-[var(--border)] px-5 py-4 md:grid-cols-[1.2fr_0.9fr_2fr_0.9fr_auto_auto] md:items-center"
               >
                 <div className="h-5 w-24 animate-pulse rounded-lg bg-[color-mix(in_srgb,var(--primary)_10%,transparent)]" />
                 <div className="h-4 w-20 animate-pulse rounded-lg bg-[color-mix(in_srgb,var(--text-soft)_15%,transparent)]" />
@@ -238,7 +235,7 @@ export default function VocabularyNotebook() {
           pageWords.map((word) => (
             <article
               key={word._id}
-              className="grid gap-3 border-b border-[var(--border)] px-5 py-4 transition hover:bg-[color-mix(in_srgb,var(--primary)_4%,transparent)] md:grid-cols-[1.2fr_1fr_2fr_0.9fr_0.6fr] md:items-center"
+              className="grid gap-3 border-b border-[var(--border)] px-5 py-4 transition hover:bg-[color-mix(in_srgb,var(--primary)_4%,transparent)] md:grid-cols-[1.2fr_0.9fr_2fr_0.9fr_auto_auto] md:items-center"
             >
               <div className="min-w-0">
                 <p className="font-display text-base font-semibold text-[var(--text)]">
@@ -248,15 +245,33 @@ export default function VocabularyNotebook() {
               <p className="font-mono text-sm text-[var(--text-soft)]">{word.ipa || "—"}</p>
               <p className="text-sm text-[var(--text)]">{word.meaning || "—"}</p>
               <p className="text-xs text-[var(--text-soft)]">{word.type || "Reader"}</p>
+              {/* Audio button */}
+              <button
+                type="button"
+                onClick={() => {
+                  window.speechSynthesis.cancel();
+                  const u = new SpeechSynthesisUtterance(word.word);
+                  u.lang = "en-US";
+                  u.rate = 0.85;
+                  window.speechSynthesis.speak(u);
+                }}
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-soft)] transition hover:border-[color-mix(in_srgb,var(--primary)_40%,transparent)] hover:text-[var(--primary)] active:scale-95"
+                aria-label={`Nghe phát âm ${word.word}`}
+                title="Play pronunciation"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5">
+                  <path d="M6.3 2.84A1.5 1.5 0 0 0 4 4.11v11.78a1.5 1.5 0 0 0 2.3 1.27l9.344-5.891a1.5 1.5 0 0 0 0-2.538L6.3 2.84Z" />
+                </svg>
+              </button>
               <div className="flex justify-end">
                 <button
                   type="button"
                   onClick={() => deleteOne(word)}
                   disabled={deletingId === word._id}
                   className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-xs font-bold text-red-600 transition hover:border-red-300 hover:bg-red-50 disabled:opacity-40 dark:hover:bg-red-950"
-                  aria-label={`Xóa ${word.word}`}
+                  aria-label={`Delete ${word.word}`}
                 >
-                  {deletingId === word._id ? "Đang xóa…" : "Xóa"}
+                  {deletingId === word._id ? "Deleting…" : "Delete"}
                 </button>
               </div>
             </article>

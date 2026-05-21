@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
 import rateLimit from "express-rate-limit";
 
 import storyRoutes from "./routes/storyRoutes.js";
@@ -72,6 +73,9 @@ app.use("/api/adaptive", adaptiveRoutes);
 app.use("/api/ai", aiLimiter, aiContentRoutes);
 app.use("/api/vocabulary", vocabularyRoutes);
 app.use("/api/library", libraryRoutes);
+
+// Serve uploaded cover images as static files
+app.use("/uploads/covers", express.static(path.join(process.cwd(), "uploads", "covers")));
 
 app.get("/", (req, res) => {
   res.send("API running...");

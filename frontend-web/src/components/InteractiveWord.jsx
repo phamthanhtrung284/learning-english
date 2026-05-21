@@ -234,6 +234,7 @@ function LnInteractiveWordSpan({
 
   return (
     <span
+      data-ln-word="true"
       onClick={(e) =>
         actions.openAt(e, {
           anchorId,
