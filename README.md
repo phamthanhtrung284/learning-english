@@ -1,60 +1,118 @@
-# English Learning App (MERN + Mobile)
+# English Studio
 
-Monorepo gồm:
-- `backend/`: Node.js + Express + MongoDB (Mongoose) API
-- `frontend-web/`: React + Vite web client
-- `mobile-app/`: Expo (React Native) mobile client
+Ứng dụng học tiếng Anh qua đọc sách — click vào từ để tra nghĩa, IPA, lưu từ vựng cá nhân, và sinh bài học theo chủ đề bằng AI.
 
 ## Yêu cầu
-- Node.js >= 18 (khuyến nghị LTS)
-- MongoDB (local hoặc remote)
 
-## 1) Backend (API)
+- [Node.js](https://nodejs.org/) v18 trở lên
+- [MongoDB](https://www.mongodb.com/try/download/community) (local) hoặc [MongoDB Atlas](https://www.mongodb.com/atlas) (cloud, miễn phí)
+- Groq API key — đăng ký miễn phí tại [console.groq.com](https://console.groq.com)
 
-### Cấu hình env
-Tạo file `backend/.env` dựa trên `backend/.env.example`:
+---
 
-```env
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/learning
-JWT_SECRET=your_jwt_secret_here
-GROQ_API_KEY=your_groq_api_key_here
+## Cài đặt
+
+### 1. Clone repo
+
+```bash
+git clone https://github.com/phamthanhtrung284/learning-english.git
+cd learning-english
 ```
 
-### Chạy backend
+### 2. Cài dependencies
+
 ```bash
+# Backend
 cd backend
 npm install
-npm run dev
+
+# Frontend
+cd ../frontend-web
+npm install
 ```
 
-API mặc định: `http://localhost:5000`
+### 3. Tạo file `.env` cho backend
 
-## 2) Frontend web
+Tạo file `backend/.env` với nội dung sau:
 
-### Cấu hình API URL (tuỳ chọn)
-Mặc định frontend gọi `http://localhost:5000/api`.
-Nếu cần đổi, tạo file `frontend-web/.env`:
+```env
+# MongoDB — dùng local hoặc Atlas
+MONGO_URI=mongodb://localhost:27017/english-studio
+
+# JWT secret — đặt chuỗi bất kỳ, càng dài càng tốt
+JWT_SECRET=your_super_secret_key_here
+
+# Groq API key — lấy tại https://console.groq.com
+GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxx
+
+# (Tuỳ chọn) Email tài khoản admin đầu tiên
+ADMIN_EMAIL=your@email.com
+
+# (Tuỳ chọn) Port backend, mặc định 5000
+PORT=5000
+
+# (Tuỳ chọn) Cho phép CORS từ frontend — để trống thì cho phép tất cả
+FRONTEND_ORIGIN=http://localhost:5173
+```
+
+> **Lưu ý:** File `.env` không được commit lên git. Đừng chia sẻ API key của bạn.
+
+### 4. Tạo file `.env` cho frontend (tuỳ chọn)
+
+Mặc định frontend kết nối tới `http://localhost:5000/api`. Nếu backend chạy port khác, tạo file `frontend-web/.env`:
 
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
 
-### Chạy web
+---
+
+## Chạy ứng dụng
+
+Mở **2 terminal** riêng:
+
+**Terminal 1 — Backend:**
 ```bash
-cd frontend-web
-npm install
+cd backend
 npm run dev
 ```
 
-## 3) Mobile app (Expo)
+**Terminal 2 — Frontend:**
 ```bash
-cd mobile-app
-npm install
-npm run start
+cd frontend-web
+npm run dev
 ```
 
-## Ghi chú bảo mật
-- Không commit `.env` (repo đã ignore). Chỉ commit `.env.example`.
-- Nếu lỡ lộ API key, phải rotate key ngay.
+Sau đó mở trình duyệt tại **http://localhost:5173**
 
+---
+
+## Tài khoản Admin
+
+Tài khoản đầu tiên đăng ký sẽ tự động là admin, **hoặc** tài khoản có email trùng với `ADMIN_EMAIL` trong `.env`.
+
+Admin có thể:
+- Upload truyện PDF lên thư viện
+- Upload ảnh bìa cho từng series
+- Chỉnh sửa nội dung chapter
+
+---
+
+## Tính năng chính
+
+| Tính năng | Mô tả |
+|---|---|
+| **Light Novel Library** | Đọc sách, click từng từ để tra nghĩa + IPA |
+| **Sentence Analyzer** | Phân tích câu theo từng token bằng AI |
+| **Vocabulary Notebook** | Lưu và quản lý từ vựng cá nhân |
+| **AI Lesson Generator** | Sinh đoạn văn mẫu theo chủ đề tuỳ chọn |
+| **PDF Import** | Admin upload PDF → tự động trích xuất thành văn bản đọc được |
+
+---
+
+## Tech stack
+
+- **Frontend:** React 19, Vite, Tailwind CSS v4, Framer Motion
+- **Backend:** Node.js, Express, MongoDB, Mongoose
+- **AI:** Groq API (LLaMA 3.3 70B)
+- **Auth:** JWT + bcrypt
