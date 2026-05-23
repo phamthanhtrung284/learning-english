@@ -13,9 +13,11 @@ import {
   IconBook,
   IconHome,
   IconLogout,
+  IconMic,
   IconNotebook,
   IconSettings,
   IconSparkles,
+  IconTranslate,
 } from "./components/Icons";
 
 const LearningHub       = lazy(() => import("./pages/LearningHub.jsx"));
@@ -24,6 +26,8 @@ const VocabularyNotebook = lazy(() => import("./pages/VocabularyNotebook.jsx"));
 const EditProfile       = lazy(() => import("./pages/EditProfile.jsx"));
 const SentenceReaderWeb = lazy(() => import("./components/SentenceReaderWeb.jsx"));
 const AdminLibrary      = lazy(() => import("./pages/AdminLibrary.jsx"));
+const TranslationExercise = lazy(() => import("./pages/TranslationExercise.jsx"));
+const SpeakingPractice    = lazy(() => import("./pages/SpeakingPractice.jsx"));
 
 function RouteFallback() {
   return (
@@ -59,10 +63,11 @@ function TopNav({ profile, onLogout }) {
   }, []);
 
   const navLinks = [
-    { label: "Home",     path: "/" },
-    { label: "Analyze",  path: "/analyze" },
-    { label: "Read",     path: "/read" },
-    { label: "Notebook", path: "/notebook" },
+    { label: "Home",      path: "/" },
+    { label: "Analyze",   path: "/analyze" },
+    { label: "Translate", path: "/translate" },
+    { label: "Speaking",  path: "/speaking" },
+    { label: "Read",      path: "/read" },
   ];
 
   const isActive = (p) => p === "/" ? path === "/" : path.startsWith(p);
@@ -120,6 +125,10 @@ function TopNav({ profile, onLogout }) {
               <button type="button" onClick={() => { navigate("/profile"); setMenuOpen(false); }}
                 className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-[#ede9e0] hover:bg-white/5">
                 <span className="text-[16px]"><IconSettings /></span> Edit profile
+              </button>
+              <button type="button" onClick={() => { navigate("/notebook"); setMenuOpen(false); }}
+                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-[#ede9e0] hover:bg-white/5">
+                <span className="text-[16px]"><IconNotebook /></span> Vocabulary
               </button>
               <div className="border-t border-white/8 mt-1 pt-1">
                 <button type="button" onClick={() => { onLogout(); setMenuOpen(false); }}
@@ -186,7 +195,9 @@ function AppShell({ onLogout, profile, setProfile }) {
 
   const storyReading   = path.startsWith("/read") && Boolean(lnChapter);
   const hideMobileDock = lnZenMode; // chỉ ẩn dock khi zen, không ẩn khi đọc thường
-  const isRead         = path.startsWith("/read");
+  const isRead      = path.startsWith("/read");
+  const isTranslate = path.startsWith("/translate");
+  const isSpeaking  = path.startsWith("/speaking");
 
   const dockBtn = (active) =>
     `flex min-h-[52px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 py-2 text-[10px] font-bold transition ${
@@ -216,16 +227,17 @@ function AppShell({ onLogout, profile, setProfile }) {
           lnZenMode
             ? "flex h-[100dvh] max-h-[100dvh] min-h-0 overflow-hidden"
             : storyReading
-              ? "flex min-h-0 overflow-hidden" 
+              ? "flex min-h-0 overflow-hidden"
               : isRead
                 ? "flex min-h-[calc(100dvh-clamp(60px,14.47vw,100px))] flex-col"
-                : ""
+                : isTranslate || isSpeaking
+                  ? "flex h-[calc(100dvh-clamp(60px,14.47vw,100px))] max-h-[calc(100dvh-clamp(60px,14.47vw,100px))] min-h-0 overflow-hidden"
+                  : ""
         }
         style={storyReading && !lnZenMode ? {
           height: "calc(100dvh - clamp(60px, 14.47vw, 100px))",
           maxHeight: "calc(100dvh - clamp(60px, 14.47vw, 100px))",
-        } : undefined}
-      >
+        } : undefined}      >
         <main
           className={
             isRead
@@ -302,6 +314,20 @@ function AppShell({ onLogout, profile, setProfile }) {
               {/* Notebook */}
               <Route path="/notebook" element={<div className="surface-panel animate-fade-rise p-6 md:p-10"><VocabularyNotebook /></div>} />
 
+              {/* Translation Exercise */}
+              <Route path="/translate" element={
+                <div className="animate-fade-rise flex h-full flex-col px-4 py-4 pb-[calc(4rem+env(safe-area-inset-bottom))] md:px-6 md:py-5 md:pb-5">
+                  <TranslationExercise />
+                </div>
+              } />
+
+              {/* Speaking Practice */}
+              <Route path="/speaking" element={
+                <div className="animate-fade-rise flex h-full flex-col px-4 py-4 pb-[calc(4rem+env(safe-area-inset-bottom))] md:px-6 md:py-5 md:pb-5">
+                  <SpeakingPractice />
+                </div>
+              } />
+
               {/* Profile */}
               <Route path="/profile" element={<EditProfile onProfileUpdated={(u) => setProfile(u)} />} />
 
@@ -328,10 +354,11 @@ function AppShell({ onLogout, profile, setProfile }) {
           aria-label="Mobile"
         >
           {[
-            { path: "/",           label: "Home",    icon: <IconHome /> },
-            { path: "/analyze",    label: "Analyze", icon: <IconSparkles /> },
-            { path: "/read",       label: "Read",    icon: <IconBook /> },
-            { path: "/notebook",   label: "Words",   icon: <IconNotebook /> },
+            { path: "/",          label: "Home",      icon: <IconHome /> },
+            { path: "/analyze",   label: "Analyze",   icon: <IconSparkles /> },
+            { path: "/translate", label: "Translate", icon: <IconTranslate /> },
+            { path: "/speaking",  label: "Speaking",  icon: <IconMic /> },
+            { path: "/read",      label: "Read",      icon: <IconBook /> },
           ].map((l) => (
             <button
               key={l.path}
@@ -350,6 +377,40 @@ function AppShell({ onLogout, profile, setProfile }) {
 }
 
 // ── Root ──────────────────────────────────────────────────────────────────────
+function DailyLimitToast() {
+  const [show, setShow] = useState(false);
+  const [detail, setDetail] = useState(null);
+
+  useEffect(() => {
+    const handler = (e) => {
+      setDetail(e.detail);
+      setShow(true);
+    };
+    window.addEventListener("daily-limit-reached", handler);
+    return () => window.removeEventListener("daily-limit-reached", handler);
+  }, []);
+
+  if (!show) return null;
+
+  return (
+    <div className="fixed bottom-24 left-1/2 z-[9999] w-[min(92vw,420px)] -translate-x-1/2 animate-fade-rise md:bottom-6">
+      <div className="rounded-2xl border border-amber-500/30 bg-[var(--bg-card)] p-4 shadow-[var(--shadow-card)]">
+        <div className="flex items-start gap-3">
+          <span className="text-xl">⚡</span>
+          <div className="flex-1 min-w-0">
+            <p className="font-bold text-[var(--text)]">Daily limit reached</p>
+            <p className="mt-1 text-sm text-[var(--text-soft)]">
+              Free accounts get {detail?.limit ?? 20} AI requests per day. Resets at midnight UTC.
+            </p>
+          </div>
+          <button type="button" onClick={() => setShow(false)}
+            className="shrink-0 text-[var(--text-soft)] hover:text-[var(--text)]">✕</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [authed, setAuthed]   = useState(() => !!localStorage.getItem("token"));
   const [profile, setProfile] = useState(readProfile);
@@ -370,6 +431,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <DailyLimitToast />
       <AppShell
         onLogout={logout}
         profile={profile}

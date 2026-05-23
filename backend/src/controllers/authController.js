@@ -8,15 +8,29 @@ import User
   from "../models/User.js";
 
 
-const publicUser = (user) => ({
-  id: user._id,
-  username: user.username,
-  email: user.email,
-  level: user.level,
-  xp: user.xp ?? 0,
-  streak: user.streak ?? 0,
-  isAdmin: Boolean(user.isAdmin),
-});
+const todayUTC = () => new Date().toISOString().slice(0, 10);
+
+const publicUser = (user) => {
+  const today = todayUTC();
+  const usage = user.dailyUsage || { count: 0, date: "" };
+  const usedToday = usage.date === today ? (usage.count || 0) : 0;
+  const FREE_LIMIT = 20;
+  return {
+    id: user._id,
+    username: user.username,
+    email: user.email,
+    level: user.level,
+    xp: user.xp ?? 0,
+    streak: user.streak ?? 0,
+    isAdmin: Boolean(user.isAdmin),
+    isPremium: Boolean(user.isPremium),
+    dailyUsage: {
+      used: usedToday,
+      limit: (user.isAdmin || user.isPremium) ? null : FREE_LIMIT,
+      remaining: (user.isAdmin || user.isPremium) ? null : Math.max(0, FREE_LIMIT - usedToday),
+    },
+  };
+};
 
 // REGISTER
 export const register =

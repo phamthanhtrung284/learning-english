@@ -23,14 +23,10 @@ export default function AdminLibrary() {
     seriesAuthor: "",
     seriesTagline: "",
     seriesEmoji: "📚",
-    seriesAccent: "from-slate-500 via-slate-600 to-slate-700",
     chapterTitle: "",
     chapterLabel: "",
     authorLine: "",
     blurb: "",
-    sourceName: "",
-    sourceUrl: "",
-    sourceLicense: "",
   });
 
   const [editingId, setEditingId] = useState(null);
@@ -260,83 +256,22 @@ export default function AdminLibrary() {
           <section className="surface-panel p-6 md:p-8">
             <h2 className="font-display text-lg font-extrabold text-[var(--text)]">Import PDF</h2>
             <div className="mt-4 grid gap-3 md:grid-cols-2">
-              <input
-                className="input-magic"
-                placeholder="Series title (tên truyện)"
-                value={form.seriesTitle}
-                onChange={(e) => setForm((p) => ({ ...p, seriesTitle: e.target.value }))}
-              />
-              <input
-                className="input-magic"
-                placeholder="Series author"
-                value={form.seriesAuthor}
-                onChange={(e) => setForm((p) => ({ ...p, seriesAuthor: e.target.value }))}
-              />
-              <input
-                className="input-magic"
-                placeholder="Tagline"
-                value={form.seriesTagline}
-                onChange={(e) => setForm((p) => ({ ...p, seriesTagline: e.target.value }))}
-              />
-              <input
-                className="input-magic"
-                placeholder="Cover emoji (vd: 📖)"
-                value={form.seriesEmoji}
-                onChange={(e) => setForm((p) => ({ ...p, seriesEmoji: e.target.value }))}
-              />
-              <input
-                className="input-magic md:col-span-2"
-                placeholder="Accent class (tailwind gradient) — tuỳ chọn"
-                value={form.seriesAccent}
-                onChange={(e) => setForm((p) => ({ ...p, seriesAccent: e.target.value }))}
-              />
-
-              <input
-                className="input-magic"
-                placeholder="Chapter title"
-                value={form.chapterTitle}
-                onChange={(e) => setForm((p) => ({ ...p, chapterTitle: e.target.value }))}
-              />
-              <input
-                className="input-magic"
-                placeholder="Chapter label (hiển thị nút)"
-                value={form.chapterLabel}
-                onChange={(e) => setForm((p) => ({ ...p, chapterLabel: e.target.value }))}
-              />
-
-              <input
-                className="input-magic"
-                placeholder="Author line (tuỳ chọn)"
-                value={form.authorLine}
-                onChange={(e) => setForm((p) => ({ ...p, authorLine: e.target.value }))}
-              />
-              <input
-                className="input-magic"
-                placeholder="Blurb (tuỳ chọn)"
-                value={form.blurb}
-                onChange={(e) => setForm((p) => ({ ...p, blurb: e.target.value }))}
-              />
-            </div>
-
-            <div className="mt-4 grid gap-3 md:grid-cols-3">
-              <input
-                className="input-magic"
-                placeholder="Source name (tuỳ chọn)"
-                value={form.sourceName}
-                onChange={(e) => setForm((p) => ({ ...p, sourceName: e.target.value }))}
-              />
-              <input
-                className="input-magic"
-                placeholder="Source url"
-                value={form.sourceUrl}
-                onChange={(e) => setForm((p) => ({ ...p, sourceUrl: e.target.value }))}
-              />
-              <input
-                className="input-magic"
-                placeholder="License"
-                value={form.sourceLicense}
-                onChange={(e) => setForm((p) => ({ ...p, sourceLicense: e.target.value }))}
-              />
+              <input className="input-magic" placeholder="Series title" value={form.seriesTitle}
+                onChange={(e) => setForm((p) => ({ ...p, seriesTitle: e.target.value }))} />
+              <input className="input-magic" placeholder="Author" value={form.seriesAuthor}
+                onChange={(e) => setForm((p) => ({ ...p, seriesAuthor: e.target.value }))} />
+              <input className="input-magic" placeholder="Tagline (mô tả ngắn)" value={form.seriesTagline}
+                onChange={(e) => setForm((p) => ({ ...p, seriesTagline: e.target.value }))} />
+              <input className="input-magic" placeholder="Cover emoji (vd: 📖)" value={form.seriesEmoji}
+                onChange={(e) => setForm((p) => ({ ...p, seriesEmoji: e.target.value }))} />
+              <input className="input-magic" placeholder="Chapter title" value={form.chapterTitle}
+                onChange={(e) => setForm((p) => ({ ...p, chapterTitle: e.target.value }))} />
+              <input className="input-magic" placeholder="Chapter label (hiển thị nút)" value={form.chapterLabel}
+                onChange={(e) => setForm((p) => ({ ...p, chapterLabel: e.target.value }))} />
+              <input className="input-magic" placeholder="Author line (tuỳ chọn)" value={form.authorLine}
+                onChange={(e) => setForm((p) => ({ ...p, authorLine: e.target.value }))} />
+              <input className="input-magic" placeholder="Blurb (tuỳ chọn)" value={form.blurb}
+                onChange={(e) => setForm((p) => ({ ...p, blurb: e.target.value }))} />
             </div>
 
             <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center">

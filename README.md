@@ -1,6 +1,96 @@
 # English Studio
 
-Ứng dụng học tiếng Anh qua đọc sách — click vào từ để tra nghĩa, IPA, lưu từ vựng cá nhân, và sinh bài học theo chủ đề bằng AI.
+Ứng dụng học tiếng Anh qua đọc sách — click vào từ để tra nghĩa, IPA, lưu từ vựng cá nhân, luyện dịch và hội thoại với AI.
+
+## Yêu cầu
+
+- [Node.js](https://nodejs.org/) v18 trở lên
+- [MongoDB Atlas](https://www.mongodb.com/atlas) (cloud, free tier)
+- Groq API key — đăng ký miễn phí tại [console.groq.com](https://console.groq.com)
+
+---
+
+## Cài đặt local
+
+### 1. Clone repo
+
+```bash
+git clone https://github.com/phamthanhtrung284/learning-english.git
+cd learning-english
+```
+
+### 2. Cài dependencies
+
+```bash
+cd backend && npm install
+cd ../frontend-web && npm install
+```
+
+### 3. Tạo file `backend/.env`
+
+```env
+MONGO_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/english-studio
+JWT_SECRET=your_super_secret_key_minimum_32_chars
+GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxx
+ADMIN_EMAIL=your@email.com
+PORT=5000
+FRONTEND_ORIGIN=http://localhost:5173
+```
+
+### 4. Chạy local
+
+```bash
+# Terminal 1
+cd backend && npm run dev
+
+# Terminal 2
+cd frontend-web && npm run dev
+```
+
+Mở **http://localhost:5173**
+
+---
+
+## Deploy lên production
+
+### Backend → Railway
+
+1. Tạo account tại [railway.app](https://railway.app)
+2. New Project → Deploy from GitHub repo → chọn thư mục `backend`
+3. Thêm environment variables (giống `.env` nhưng dùng MongoDB Atlas URI)
+4. Railway sẽ tự detect Node.js và chạy `npm start`
+5. Copy URL backend (vd: `https://your-app.railway.app`)
+
+### Frontend → Vercel
+
+1. Tạo account tại [vercel.com](https://vercel.com)
+2. Import GitHub repo → chọn thư mục `frontend-web`
+3. Thêm environment variable:
+   ```
+   VITE_API_URL=https://your-app.railway.app/api
+   ```
+4. Deploy
+
+### Sau khi deploy
+
+- Cập nhật `FRONTEND_ORIGIN` trên Railway thành URL Vercel của mày
+- Tài khoản đầu tiên đăng ký sẽ tự động là admin
+
+---
+
+## Giới hạn sử dụng
+
+- **Free**: 20 AI requests/ngày (tra từ, dịch câu, speaking, v.v.)
+- **Admin**: không giới hạn
+
+---
+
+## Tech stack
+
+- **Frontend:** React 19, Vite, Tailwind CSS v4, Framer Motion
+- **Backend:** Node.js, Express, MongoDB, Mongoose
+- **AI:** Groq API (LLaMA 3.3 70B)
+- **Auth:** JWT + bcrypt
 
 ## Yêu cầu
 

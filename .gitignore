@@ -29,3 +29,6 @@ Thumbs.db
 .idea/
 .vscode/
 
+# uploaded files (PDFs, cover images) — stored on server, not in git
+backend/uploads/
+.uploads/

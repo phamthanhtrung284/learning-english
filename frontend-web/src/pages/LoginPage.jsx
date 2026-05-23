@@ -102,20 +102,8 @@ export default function LoginPage({ onLogin }) {
               </div>
 
               <div className="mt-6 space-y-2.5">
-                <button
-                  type="button"
-                  className="w-full rounded-[14px] border border-[var(--border)] bg-[var(--surface-elevated)] px-4 py-2.5 text-sm font-semibold text-[var(--text)] transition hover:border-[color-mix(in_srgb,var(--primary)_35%,transparent)]"
-                >
-                  Tiếp tục với Google
-                </button>
-                <button
-                  type="button"
-                  className="w-full rounded-[14px] border border-[var(--border)] bg-[var(--surface-elevated)] px-4 py-2.5 text-sm font-semibold text-[var(--text)] transition hover:border-[color-mix(in_srgb,var(--primary)_35%,transparent)]"
-                >
-                  Tiếp tục với Github
-                </button>
                 <div className="py-1 text-center text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--text-soft)]">
-                  or
+                  sign in with email
                 </div>
               </div>
 
