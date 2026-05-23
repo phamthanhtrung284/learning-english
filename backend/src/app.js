@@ -14,6 +14,7 @@ import adaptiveRoutes from "./routes/adaptiveRoutes.js";
 import aiContentRoutes from "./routes/aiContentRoutes.js";
 import vocabularyRoutes from "./routes/vocabularyRoutes.js";
 import libraryRoutes from "./routes/libraryRoutes.js";
+import speakingRoutes from "./routes/speakingRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 
 export const app = express();
@@ -73,6 +74,7 @@ app.use("/api/adaptive", adaptiveRoutes);
 app.use("/api/ai", aiLimiter, aiContentRoutes);
 app.use("/api/vocabulary", vocabularyRoutes);
 app.use("/api/library", libraryRoutes);
+app.use("/api/speaking", speakingRoutes);
 
 // Serve uploaded cover images as static files
 app.use("/uploads/covers", express.static(path.join(process.cwd(), "uploads", "covers")));

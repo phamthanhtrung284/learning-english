@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../services/api";
+import { speak } from "../utils/speak";
 
 function SkeletonLine({ className = "" }) {
   return (
@@ -27,11 +28,7 @@ export default function WordTooltip({
 
   const handleSpeak = (e) => {
     e.stopPropagation();
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(word);
-    utterance.lang = "en-US";
-    utterance.rate = 0.9;
-    window.speechSynthesis.speak(utterance);
+    speak(word);
   };
 
   const handleSaveWord = async (e) => {

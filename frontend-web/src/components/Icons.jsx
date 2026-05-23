@@ -147,3 +147,50 @@ export function IconMoon(props) {
     </svg>
   );
 }
+
+export function IconTranslate(props) {
+  return (
+    <svg {...baseProps(props)}>
+      <path
+        d="M3 5h10M8 3v2M6 9c.5 2 2 3.5 4 4.5M10 9c-.5 2-2 3.5-4 4.5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M12 19l2-5 2 5M13.5 17h3"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M3 19h3M19 5h2M21 5l-5 14"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+export function IconMic(props) {
+  return (
+    <svg {...baseProps(props)}>
+      <path
+        d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M19 10a7 7 0 0 1-14 0M12 19v3M9 22h6"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}

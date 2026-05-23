@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
+import { speak } from "../utils/speak";
 import api from "../services/api";
 import WordTooltip from "./WordTooltip";
 import {
@@ -59,11 +60,7 @@ function InteractiveWordWordAnchored({
 
   const speakWord = (e) => {
     e.stopPropagation();
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(wordData.text);
-    utterance.lang = "en-US";
-    utterance.rate = 0.9;
-    window.speechSynthesis.speak(utterance);
+    speak(wordData.text);
   };
 
   const updatePosition = useCallback(() => {

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import api from "../services/api";
+import { speak } from "../utils/speak";
 
 const PAGE_SIZE = 20;
 
@@ -248,13 +249,7 @@ export default function VocabularyNotebook() {
               {/* Audio button */}
               <button
                 type="button"
-                onClick={() => {
-                  window.speechSynthesis.cancel();
-                  const u = new SpeechSynthesisUtterance(word.word);
-                  u.lang = "en-US";
-                  u.rate = 0.85;
-                  window.speechSynthesis.speak(u);
-                }}
+                onClick={() => speak(word.word, 0.85)}
                 className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-soft)] transition hover:border-[color-mix(in_srgb,var(--primary)_40%,transparent)] hover:text-[var(--primary)] active:scale-95"
                 aria-label={`Nghe phát âm ${word.word}`}
                 title="Play pronunciation"

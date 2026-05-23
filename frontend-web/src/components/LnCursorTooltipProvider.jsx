@@ -1,11 +1,3 @@
-/**
- * LnCursorTooltipProvider — Sidebar panel (left side, inside reader frame).
- *
- * Design:
- * - Click a word → panel slides in from the left, stays open until user clicks X or another word.
- * - Panel is fixed inside the reader column, does NOT overlap text (text column shrinks on md+).
- * - No hover-disappear race condition.
- */
 import {
   createContext,
   useCallback,
@@ -20,6 +12,7 @@ import {
   readWordLookupCache,
   writeWordLookupCache,
 } from "../cache/wordLookupCache";
+import { speak } from "../utils/speak";
 
 const ActionsContext = createContext(null);
 const ActiveAnchorContext = createContext(null);
@@ -47,11 +40,7 @@ function SidePanel({ layer, display, canSave, needsFetch, onClose, onRetry, onSa
 
   const handleSpeak = (e) => {
     e.stopPropagation();
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(layer.wordData.text);
-    u.lang = "en-US";
-    u.rate = 0.9;
-    window.speechSynthesis.speak(u);
+    speak(layer.wordData.text);
   };
 
   return (
