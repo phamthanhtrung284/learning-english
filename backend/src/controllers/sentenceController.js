@@ -4,6 +4,9 @@ import {
 } from "../services/groqSentenceService.js";
 import User from "../models/User.js";
 import { lookupWordWithAI } from "../services/groqWordLookupService.js";
+import { checkTranslationWithAI } from "../services/translationCheckService.js";
+import { extractVocabularyFromPassage } from "../services/dictionaryService.js";
+import { generatePassage } from "../services/passageGeneratorService.js";
 
 export const analyzeSentence =
   async (req, res) => {
@@ -78,5 +81,52 @@ export const lookupWord = async (req, res) => {
     res.status(500).json({
       error: error.message || "Lookup failed",
     });
+  }
+};
+
+export const checkTranslation = async (req, res) => {
+  try {
+    const { vietnameseSentence, userTranslation } = req.body;
+    if (!vietnameseSentence || !userTranslation) {
+      return res.status(400).json({ error: "vietnameseSentence và userTranslation là bắt buộc." });
+    }
+    const result = await checkTranslationWithAI(
+      String(vietnameseSentence).trim(),
+      String(userTranslation).trim()
+    );
+    res.json(result);
+  } catch (error) {
+    console.error("checkTranslation:", error);
+    res.status(500).json({ error: error.message || "Translation check failed" });
+  }
+};
+
+export const getDictionaryForPassage = async (req, res) => {
+  try {
+    const { passage } = req.body;
+    if (!passage) return res.status(400).json({ error: "passage is required" });
+    const items = await extractVocabularyFromPassage(String(passage).trim());
+    res.json({ items });
+  } catch (error) {
+    console.error("getDictionaryForPassage:", error);
+    res.status(500).json({ error: error.message || "Dictionary failed" });
+  }
+};
+
+export const getGeneratedPassage = async (req, res) => {
+  try {
+    const { level, contentType, usedTopics } = req.body;
+    if (!level || !contentType) {
+      return res.status(400).json({ error: "level and contentType are required" });
+    }
+    const passage = await generatePassage(
+      String(level).toLowerCase(),
+      String(contentType).toLowerCase(),
+      Array.isArray(usedTopics) ? usedTopics : []
+    );
+    res.json(passage);
+  } catch (error) {
+    console.error("getGeneratedPassage:", error);
+    res.status(500).json({ error: error.message || "Passage generation failed" });
   }
 };
