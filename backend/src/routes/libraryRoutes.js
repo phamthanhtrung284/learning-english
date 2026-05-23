@@ -38,21 +38,10 @@ const uploadPdf = multer({
   },
 });
 
-// ── Cover image upload storage ────────────────────────────────────────────────
-const coverDir = path.join(process.cwd(), "uploads", "covers");
-fs.mkdirSync(coverDir, { recursive: true });
-
-const coverStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, coverDir),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname || ".jpg").toLowerCase() || ".jpg";
-    cb(null, `cover-${Date.now()}${ext}`);
-  },
-});
-
+// ── Cover image upload — memory storage (goes straight to Cloudinary) ────────
 const uploadCover = multer({
-  storage: coverStorage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const ok = /^image\/(jpeg|png|webp|gif)$/.test(file.mimetype);
     cb(ok ? null : new Error("Only image files are allowed"), ok);

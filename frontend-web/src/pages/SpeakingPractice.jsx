@@ -17,7 +17,7 @@ const SpeakBtn = ({ onClick }) => (
 );
 
 // ── Topic selector ────────────────────────────────────────────────────────────
-function TopicSelect({ onStart }) {
+function TopicSelect({ onStart, sessions, onResume, onDeleteSession }) {
   const [topic, setTopic] = useState("daily_life");
   return (
     <div className="animate-fade-rise flex h-full flex-col justify-center">
@@ -31,6 +31,29 @@ function TopicSelect({ onStart }) {
             A real conversation with an AI friend. Type or use your voice.
           </p>
         </div>
+
+        {/* Saved sessions */}
+        {sessions.length > 0 && (
+          <div>
+            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-[var(--text-soft)]">Continue a conversation</p>
+            <div className="space-y-2">
+              {sessions.map(s => (
+                <div key={s._id} className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm text-[var(--text)] truncate">
+                      {TOPICS.find(t => t.id === s.topic)?.icon} {s.topicLabel || s.topic}
+                    </p>
+                    <p className="text-xs text-[var(--text-soft)]">{s.turnCount} turns · {new Date(s.updatedAt).toLocaleDateString("vi-VN")}</p>
+                  </div>
+                  <button type="button" onClick={() => onResume(s)}
+                    className="glass-btn h-8 px-3 text-xs font-bold text-[var(--text)]">Resume</button>
+                  <button type="button" onClick={() => onDeleteSession(s._id)}
+                    className="text-[var(--text-soft)] hover:text-red-400 transition text-xs">✕</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-2 gap-3">
           {TOPICS.map(t => (
@@ -152,6 +175,7 @@ function SuggestionsPanel({ suggestions, turnCount, onUse }) {
 function ConversationScreen({ topic, onBack }) {
   const [history, setHistory]         = useState([]);
   const [current, setCurrent]         = useState(null);
+  const [sessionId, setSessionId]     = useState(null);
   const [suggestions, setSuggestions] = useState([]);
   const [input, setInput]             = useState("");
   const [loading, setLoading]         = useState(false);
@@ -170,7 +194,7 @@ function ConversationScreen({ topic, onBack }) {
     setSuggestions([]); setInput(""); setError("");
     setLoading(true);
     api.post("/speaking/start", { topic })
-      .then(({ data }) => { setCurrent(data); speak(data.question); })
+      .then(({ data }) => { setCurrent(data); setSessionId(data.sessionId || null); speak(data.question); })
       .catch(e => setError(e?.response?.data?.error || "Failed to start"))
       .finally(() => setLoading(false));
   }, [topic]);
@@ -208,7 +232,7 @@ function ConversationScreen({ topic, onBack }) {
     try {
       const historyForApi = history.map(h => ({ question: h.question, answer: h.answer }));
       historyForApi.push({ question: current.question, answer: null });
-      const { data } = await api.post("/speaking/continue", { topic, history: historyForApi, userAnswer: answer });
+      const { data } = await api.post("/speaking/continue", { topic, history: historyForApi, userAnswer: answer, sessionId });
       setHistory(h => [...h, { question: current.question, hint: current.hint, answer, feedback: data.feedback }]);
       setCurrent({ question: data.nextQuestion, hint: "" });
       setSuggestions(Array.isArray(data.suggestions) ? data.suggestions : []);
@@ -385,7 +409,51 @@ function ConversationScreen({ topic, onBack }) {
 
 // ── Root ──────────────────────────────────────────────────────────────────────
 export default function SpeakingPractice() {
-  const [topic, setTopic] = useState(null);
-  if (!topic) return <TopicSelect onStart={setTopic} />;
-  return <ConversationScreen topic={topic} onBack={() => setTopic(null)} />;
+  const [topic, setTopic]       = useState(null);
+  const [sessions, setSessions] = useState([]);
+  const [resumeData, setResumeData] = useState(null);
+
+  useEffect(() => {
+    api.get("/speaking/sessions")
+      .then(({ data }) => setSessions(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, []);
+
+  const handleDeleteSession = async (id) => {
+    try {
+      await api.delete(`/speaking/sessions/${id}`);
+      setSessions(s => s.filter(x => x._id !== id));
+    } catch {}
+  };
+
+  const handleResume = (session) => {
+    // Restore history from saved turns
+    const restoredHistory = (session.turns || []).map(t => ({
+      question: t.question,
+      hint: "",
+      answer: t.answer,
+      feedback: t.feedback,
+    }));
+    setResumeData({ topic: session.topic, sessionId: session._id, history: restoredHistory });
+    setTopic(session.topic);
+  };
+
+  if (!topic) {
+    return (
+      <TopicSelect
+        onStart={setTopic}
+        sessions={sessions}
+        onResume={handleResume}
+        onDeleteSession={handleDeleteSession}
+      />
+    );
+  }
+
+  return (
+    <ConversationScreen
+      topic={topic}
+      resumeData={resumeData}
+      onBack={() => { setTopic(null); setResumeData(null); }}
+    />
+  );
 }

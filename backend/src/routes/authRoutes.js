@@ -17,18 +17,9 @@ import { protect, adminOnly } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Avatar upload storage
-const avatarDir = path.join(process.cwd(), "uploads", "avatars");
-fs.mkdirSync(avatarDir, { recursive: true });
-
+// Avatar upload — memory storage (goes straight to Cloudinary)
 const avatarUpload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => cb(null, avatarDir),
-    filename: (req, file, cb) => {
-      const ext = path.extname(file.originalname || ".jpg").toLowerCase() || ".jpg";
-      cb(null, `avatar-${req.user.id}${ext}`);
-    },
-  }),
+  storage: multer.memoryStorage(),
   limits: { fileSize: 3 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const ok = /^image\/(jpeg|png|webp)$/.test(file.mimetype);

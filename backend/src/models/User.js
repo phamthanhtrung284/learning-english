@@ -9,7 +9,8 @@ const userSchema = new mongoose.Schema({
   password:  { type: String, required: true },
   isAdmin:   { type: Boolean, default: false },
   isPremium: { type: Boolean, default: false },
-  avatar:    { type: String, default: "" }, // relative path /uploads/avatars/<file>
+  avatar:    { type: String, default: "" }, // Cloudinary URL
+  avatarPublicId: { type: String, default: "" }, // for deletion
 
   // Daily AI usage tracking
   dailyUsage: {

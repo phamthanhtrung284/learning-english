@@ -259,6 +259,7 @@ export const leaderboard = async (req, res) => {
 
 import fs from "fs";
 import path from "path";
+import { uploadToCloudinary, deleteFromCloudinary } from "../services/cloudinaryService.js";
 
 export const uploadAvatar = async (req, res) => {
   try {
@@ -266,14 +267,18 @@ export const uploadAvatar = async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    // Delete old avatar if exists
-    if (user.avatar) {
-      const old = path.join(process.cwd(), user.avatar.replace(/^\//, ""));
-      try { fs.unlinkSync(old); } catch { /* ignore */ }
-    }
+    // Delete old avatar from Cloudinary
+    if (user.avatarPublicId) await deleteFromCloudinary(user.avatarPublicId);
 
-    const relativePath = `/uploads/avatars/${req.file.filename}`;
-    user.avatar = relativePath;
+    const { url, public_id } = await uploadToCloudinary(req.file.buffer, {
+      folder: "english-studio/avatars",
+      public_id: `avatar-${req.user.id}`,
+      overwrite: true,
+      transformation: [{ width: 200, height: 200, crop: "fill", gravity: "face" }],
+    });
+
+    user.avatar = url;
+    user.avatarPublicId = public_id;
     await user.save();
     const fresh = await User.findById(user._id).select("-password");
     res.json({ user: publicUser(fresh) });

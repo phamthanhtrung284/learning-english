@@ -7,7 +7,8 @@ const LibrarySeriesSchema = new mongoose.Schema(
     tagline: { type: String, default: "", trim: true },
     accent: { type: String, default: "from-slate-500 via-slate-600 to-slate-700" },
     coverEmoji: { type: String, default: "📚" },
-    coverImage: { type: String, default: "" }, // relative path: /uploads/covers/<filename>
+    coverImage: { type: String, default: "" }, // Cloudinary URL
+    coverPublicId: { type: String, default: "" }, // for deletion
 
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   },

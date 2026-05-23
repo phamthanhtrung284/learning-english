@@ -264,17 +264,25 @@ export async function uploadSeriesCover(req, res) {
   const series = await LibrarySeries.findById(id);
   if (!series) return res.status(404).json({ error: "Series not found" });
 
-  // xóa ảnh cũ nếu có
-  if (series.coverImage) {
-    const oldPath = path.join(process.cwd(), series.coverImage.replace(/^\//, ""));
-    try { fs.unlinkSync(oldPath); } catch { /* ignore */ }
+  // Delete old cover from Cloudinary
+  if (series.coverPublicId) {
+    const { deleteFromCloudinary } = await import("../services/cloudinaryService.js");
+    await deleteFromCloudinary(series.coverPublicId);
   }
 
-  const relativePath = `/uploads/covers/${req.file.filename}`;
-  series.coverImage = relativePath;
+  const { uploadToCloudinary } = await import("../services/cloudinaryService.js");
+  const { url, public_id } = await uploadToCloudinary(req.file.buffer, {
+    folder: "english-studio/covers",
+    public_id: `cover-${id}`,
+    overwrite: true,
+    transformation: [{ width: 400, height: 600, crop: "fill" }],
+  });
+
+  series.coverImage = url;
+  series.coverPublicId = public_id;
   await series.save();
 
-  res.json({ ok: true, coverImage: relativePath });
+  res.json({ ok: true, coverImage: url });
 }
 
 export async function deleteChapterAdmin(req, res) {
