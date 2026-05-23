@@ -1,6 +1,104 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import api from "../services/api";
 
+// ── Users tab ─────────────────────────────────────────────────────────────────
+function UsersTab() {
+  const [users, setUsers]     = useState([]);
+  const [total, setTotal]     = useState(0);
+  const [page, setPage]       = useState(0);
+  const [search, setSearch]   = useState("");
+  const [loading, setLoading] = useState(true);
+  const [err, setErr]         = useState("");
+  const [updating, setUpdating] = useState(null);
+
+  const fetchUsers = useCallback(async (p = 0, q = "") => {
+    setLoading(true); setErr("");
+    try {
+      const { data } = await api.get("/auth/admin/users", { params: { page: p, limit: 20, search: q } });
+      setUsers(data.users || []);
+      setTotal(data.total || 0);
+      setPage(p);
+    } catch (e) {
+      setErr(e?.response?.data?.error || "Load failed");
+    } finally { setLoading(false); }
+  }, []);
+
+  useEffect(() => { fetchUsers(0, ""); }, [fetchUsers]);
+
+  const toggle = async (userId, field, current) => {
+    setUpdating(userId + field);
+    try {
+      await api.patch(`/auth/admin/users/${userId}`, { [field]: !current });
+      setUsers(u => u.map(x => x.id === userId ? { ...x, [field]: !current } : x));
+    } catch (e) {
+      setErr(e?.response?.data?.error || "Update failed");
+    } finally { setUpdating(null); }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex gap-3">
+        <input className="input-magic flex-1" placeholder="Search username or email…"
+          value={search} onChange={e => setSearch(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && fetchUsers(0, search)} />
+        <button type="button" onClick={() => fetchUsers(0, search)}
+          className="glass-btn h-12 px-5 text-sm font-bold text-[var(--text)]">Search</button>
+      </div>
+
+      {err && <div className="rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-2 text-sm text-red-400">{err}</div>}
+
+      {loading ? (
+        <div className="text-sm text-[var(--text-soft)]">Loading…</div>
+      ) : (
+        <div className="overflow-x-auto rounded-2xl border border-[var(--border)]">
+          <table className="w-full text-sm">
+            <thead className="border-b border-[var(--border)] bg-[var(--bg-soft)]">
+              <tr>
+                {["Username","Email","Joined","Premium","Admin"].map(h => (
+                  <th key={h} className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-[var(--text-soft)]">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {users.map(u => (
+                <tr key={u.id} className="border-b border-[var(--border)] hover:bg-[var(--bg-soft)] transition">
+                  <td className="px-4 py-3 font-semibold text-[var(--text)]">{u.username}</td>
+                  <td className="px-4 py-3 text-[var(--text-soft)]">{u.email}</td>
+                  <td className="px-4 py-3 text-[var(--text-soft)]">{new Date(u.createdAt || Date.now()).toLocaleDateString("vi-VN")}</td>
+                  <td className="px-4 py-3">
+                    <button type="button" disabled={updating === u.id + "isPremium"}
+                      onClick={() => toggle(u.id, "isPremium", u.isPremium)}
+                      className={`rounded-lg px-3 py-1 text-xs font-bold transition ${u.isPremium ? "bg-amber-500/20 text-amber-400" : "bg-[var(--bg-card)] text-[var(--text-soft)]"}`}>
+                      {u.isPremium ? "Premium" : "Free"}
+                    </button>
+                  </td>
+                  <td className="px-4 py-3">
+                    <button type="button" disabled={updating === u.id + "isAdmin"}
+                      onClick={() => toggle(u.id, "isAdmin", u.isAdmin)}
+                      className={`rounded-lg px-3 py-1 text-xs font-bold transition ${u.isAdmin ? "bg-[var(--primary)]/20 text-[var(--primary)]" : "bg-[var(--bg-card)] text-[var(--text-soft)]"}`}>
+                      {u.isAdmin ? "Admin" : "User"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <div className="flex items-center justify-between text-sm text-[var(--text-soft)]">
+        <span>{total} users total</span>
+        <div className="flex gap-2">
+          <button type="button" disabled={page === 0} onClick={() => fetchUsers(page - 1, search)}
+            className="glass-btn h-8 px-3 text-xs disabled:opacity-30">← Prev</button>
+          <button type="button" disabled={(page + 1) * 20 >= total} onClick={() => fetchUsers(page + 1, search)}
+            className="glass-btn h-8 px-3 text-xs disabled:opacity-30">Next →</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function joinParagraphs(paragraphs) {
   if (!Array.isArray(paragraphs)) return "";
   return paragraphs
@@ -10,7 +108,7 @@ function joinParagraphs(paragraphs) {
 }
 
 export default function AdminLibrary() {
-  const [tab, setTab] = useState("manage"); // manage | edit
+  const [tab, setTab] = useState("manage"); // manage | edit | users
   const [series, setSeries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
@@ -219,29 +317,17 @@ export default function AdminLibrary() {
       </header>
 
       <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={() => setTab("manage")}
-          className={`glass-btn h-10 px-4 text-sm font-bold ${
-            tab === "manage" ? "border-[color-mix(in_srgb,var(--primary)_35%,transparent)]" : ""
-          }`}
-        >
-          Quản lý / Import
+        <button type="button" onClick={() => setTab("manage")}
+          className={`glass-btn h-10 px-4 text-sm font-bold ${tab === "manage" ? "border-[color-mix(in_srgb,var(--primary)_35%,transparent)]" : ""}`}>
+          Library
         </button>
-        <button
-          type="button"
-          onClick={() => {
-            if (!editingId) {
-              alert("Chọn 1 chapter để Edit trước.");
-              return;
-            }
-            setTab("edit");
-          }}
-          className={`glass-btn h-10 px-4 text-sm font-bold ${
-            tab === "edit" ? "border-[color-mix(in_srgb,var(--primary)_35%,transparent)]" : ""
-          }`}
-        >
+        <button type="button" onClick={() => { if (!editingId) { alert("Chọn 1 chapter để Edit trước."); return; } setTab("edit"); }}
+          className={`glass-btn h-10 px-4 text-sm font-bold ${tab === "edit" ? "border-[color-mix(in_srgb,var(--primary)_35%,transparent)]" : ""}`}>
           Edit
+        </button>
+        <button type="button" onClick={() => setTab("users")}
+          className={`glass-btn h-10 px-4 text-sm font-bold ${tab === "users" ? "border-[color-mix(in_srgb,var(--primary)_35%,transparent)]" : ""}`}>
+          Users
         </button>
       </div>
 
@@ -250,6 +336,13 @@ export default function AdminLibrary() {
           {err}
         </div>
       ) : null}
+
+      {tab === "users" && (
+        <section className="surface-panel p-6 md:p-8">
+          <h2 className="font-display mb-4 text-lg font-extrabold text-[var(--text)]">User Management</h2>
+          <UsersTab />
+        </section>
+      )}
 
       {tab === "manage" ? (
         <>

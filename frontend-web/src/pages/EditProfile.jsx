@@ -1,17 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import api from "../services/api";
+
+const BACKEND = import.meta.env.VITE_API_URL?.replace("/api", "") || "http://localhost:5000";
 
 export default function EditProfile({ onProfileUpdated }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [avatar, setAvatar] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const fileRef = useRef(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -21,6 +26,7 @@ export default function EditProfile({ onProfileUpdated }) {
         if (cancelled) return;
         setUsername(data.username || "");
         setEmail(data.email || "");
+        setAvatar(data.avatar || "");
       } catch {
         if (!cancelled) setError("Could not load profile.");
       } finally {
@@ -57,6 +63,7 @@ export default function EditProfile({ onProfileUpdated }) {
       const u = data.user;
       localStorage.setItem("user", JSON.stringify(u));
       onProfileUpdated?.(u);
+      setAvatar(u.avatar || "");
       setMessage("Profile updated.");
       setCurrentPassword("");
       setNewPassword("");
@@ -65,6 +72,25 @@ export default function EditProfile({ onProfileUpdated }) {
       setError(err?.response?.data?.error || err?.message || "Update failed.");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAvatarUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("avatar", file);
+      const { data } = await api.post("/auth/avatar", fd, { headers: { "Content-Type": "multipart/form-data" } });
+      const u = data.user;
+      localStorage.setItem("user", JSON.stringify(u));
+      onProfileUpdated?.(u);
+      setAvatar(u.avatar || "");
+    } catch (err) {
+      setError(err?.response?.data?.error || "Avatar upload failed.");
+    } finally {
+      setAvatarUploading(false);
     }
   };
 
@@ -167,13 +193,24 @@ export default function EditProfile({ onProfileUpdated }) {
 
         <aside className="surface-panel h-fit p-5">
           <div className="flex items-center gap-3">
-            <motion.div
-              className="flex h-14 w-14 items-center justify-center rounded-2xl text-xl font-bold text-[var(--primary)] ring-1 ring-[var(--border)]"
-              style={{ background: "var(--surface-elevated)" }}
-              whileHover={{ scale: 1.02 }}
-            >
-              {username.charAt(0).toUpperCase() || "?"}
-            </motion.div>
+            <div className="relative shrink-0">
+              <motion.div
+                className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl text-xl font-bold text-[var(--primary)] ring-1 ring-[var(--border)]"
+                style={{ background: "var(--surface-elevated)" }}
+                whileHover={{ scale: 1.02 }}
+              >
+                {avatar
+                  ? <img src={`${BACKEND}${avatar}`} alt="" className="h-full w-full object-cover" />
+                  : username.charAt(0).toUpperCase() || "?"}
+              </motion.div>
+              <button type="button"
+                onClick={() => fileRef.current?.click()}
+                disabled={avatarUploading}
+                className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)] text-[10px] text-[var(--text-soft)] hover:text-[var(--text)] transition disabled:opacity-50">
+                {avatarUploading ? "…" : "✎"}
+              </button>
+              <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleAvatarUpload} />
+            </div>
             <div className="min-w-0">
               <p className="truncate font-display text-base font-bold text-[var(--text)]">{username || "Username"}</p>
               <p className="truncate text-sm text-[var(--text-soft)]">{email || "Email"}</p>

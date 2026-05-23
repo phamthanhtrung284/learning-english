@@ -52,6 +52,8 @@ function TopNav({ profile, onLogout }) {
 
   const displayName = profile?.username?.trim() || profile?.email?.split("@")[0] || "Reader";
   const initial     = displayName.charAt(0).toUpperCase();
+  const BACKEND     = import.meta.env.VITE_API_URL?.replace("/api", "") || "http://localhost:5000";
+  const avatarSrc   = profile?.avatar ? `${BACKEND}${profile.avatar}` : null;
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -112,9 +114,11 @@ function TopNav({ profile, onLogout }) {
         {/* Theme + Avatar sát phải */}
         <div className="absolute right-0 top-0 flex h-full items-center gap-3 px-5" ref={menuRef}>
           <button type="button" onClick={() => setMenuOpen((o) => !o)}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-[#2a2a2e] text-sm font-bold text-[#ede9e0] transition hover:border-white/40"
+            className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-[#2a2a2e] text-sm font-bold text-[#ede9e0] transition hover:border-white/40"
             aria-label="User menu">
-            {initial}
+            {avatarSrc
+              ? <img src={avatarSrc} alt="" className="h-full w-full object-cover" />
+              : initial}
           </button>
           {menuOpen && (
             <div className="absolute right-4 top-full mt-2 z-50 w-52 overflow-hidden rounded-[16px] border border-white/10 bg-[#1a1a1e] py-1.5 shadow-[0_16px_48px_rgba(0,0,0,0.7)]">
@@ -359,6 +363,8 @@ function AppShell({ onLogout, profile, setProfile }) {
             { path: "/translate", label: "Translate", icon: <IconTranslate /> },
             { path: "/speaking",  label: "Speaking",  icon: <IconMic /> },
             { path: "/read",      label: "Read",      icon: <IconBook /> },
+            { path: "/notebook",  label: "Words",     icon: <IconNotebook /> },
+            { path: "/profile",   label: "Profile",   icon: <IconSettings /> },
           ].map((l) => (
             <button
               key={l.path}

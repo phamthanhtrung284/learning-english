@@ -9,11 +9,12 @@ const userSchema = new mongoose.Schema({
   password:  { type: String, required: true },
   isAdmin:   { type: Boolean, default: false },
   isPremium: { type: Boolean, default: false },
+  avatar:    { type: String, default: "" }, // relative path /uploads/avatars/<file>
 
   // Daily AI usage tracking
   dailyUsage: {
     count: { type: Number, default: 0 },
-    date:  { type: String, default: "" }, // "YYYY-MM-DD"
+    date:  { type: String, default: "" },
   },
 }, { timestamps: true });
 

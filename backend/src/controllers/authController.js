@@ -24,6 +24,7 @@ const publicUser = (user) => {
     streak: user.streak ?? 0,
     isAdmin: Boolean(user.isAdmin),
     isPremium: Boolean(user.isPremium),
+    avatar: user.avatar || "",
     dailyUsage: {
       used: usedToday,
       limit: (user.isAdmin || user.isPremium) ? null : FREE_LIMIT,
@@ -251,6 +252,75 @@ export const leaderboard = async (req, res) => {
         streak: u.streak ?? 0,
       }))
     );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+import fs from "fs";
+import path from "path";
+
+export const uploadAvatar = async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // Delete old avatar if exists
+    if (user.avatar) {
+      const old = path.join(process.cwd(), user.avatar.replace(/^\//, ""));
+      try { fs.unlinkSync(old); } catch { /* ignore */ }
+    }
+
+    const relativePath = `/uploads/avatars/${req.file.filename}`;
+    user.avatar = relativePath;
+    await user.save();
+    const fresh = await User.findById(user._id).select("-password");
+    res.json({ user: publicUser(fresh) });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const listUsersAdmin = async (req, res) => {
+  try {
+    const page  = Math.max(0, parseInt(req.query.page || "0", 10));
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit || "20", 10)));
+    const search = String(req.query.search || "").trim();
+
+    const filter = search
+      ? { $or: [{ username: { $regex: search, $options: "i" } }, { email: { $regex: search, $options: "i" } }] }
+      : {};
+
+    const [users, total] = await Promise.all([
+      User.find(filter).select("-password").sort({ createdAt: -1 }).skip(page * limit).limit(limit).lean(),
+      User.countDocuments(filter),
+    ]);
+
+    res.json({
+      users: users.map(publicUser),
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const updateUserAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isPremium, isAdmin } = req.body;
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    if (isPremium !== undefined) user.isPremium = Boolean(isPremium);
+    if (isAdmin !== undefined) user.isAdmin = Boolean(isAdmin);
+
+    await user.save();
+    const fresh = await User.findById(id).select("-password");
+    res.json({ user: publicUser(fresh) });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

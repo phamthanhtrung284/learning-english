@@ -78,6 +78,7 @@ app.use("/api/speaking", speakingRoutes);
 
 // Serve uploaded cover images as static files
 app.use("/uploads/covers", express.static(path.join(process.cwd(), "uploads", "covers")));
+app.use("/uploads/avatars", express.static(path.join(process.cwd(), "uploads", "avatars")));
 
 app.get("/", (req, res) => {
   res.send("API running...");
