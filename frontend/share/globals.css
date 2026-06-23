@@ -1,0 +1,371 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: #0d0d0f;
+  --bg-soft: #111114;
+  --bg-card: #16161a;
+  --primary: #c0392b;
+  --primary-2: #e74c3c;
+  --text: #e8e6e1;
+  --text-soft: #7a7870;
+  --border: rgba(232, 230, 225, 0.07);
+  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.55);
+  --shadow-card: 0 16px 48px rgba(0, 0, 0, 0.7);
+  --gradient-primary: linear-gradient(135deg, #c0392b 0%, #8b0000 100%);
+  --surface-elevated: #1e1e24;
+
+  --background: #0d0d0f;
+  --foreground: #e8e6e1;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: #3b82f6;
+  --color-secondary: #8b5cf6;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--primary) 28%, transparent);
+  color: var(--text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.font-display {
+  font-family: "DM Sans", "Inter", system-ui, sans-serif;
+}
+
+/* ── Auth scene ── */
+
+.auth-scene {
+  background:
+    radial-gradient(900px 520px at 8% 0%, color-mix(in srgb, #8e44ad 35%, transparent), transparent 55%),
+    radial-gradient(860px 520px at 98% 10%, color-mix(in srgb, #4a9eff 30%, transparent), transparent 58%),
+    linear-gradient(180deg, var(--bg-soft) 0%, var(--bg) 55%, var(--bg) 100%);
+}
+
+.auth-island::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -16%;
+  height: 38%;
+  border-radius: 9999px;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--primary) 35%, transparent),
+    transparent 70%
+  );
+  pointer-events: none;
+  opacity: 0.65;
+}
+
+.auth-stars {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  background-image:
+    radial-gradient(1px 1px at 12% 22%, rgba(255, 255, 255, 0.7) 50%, transparent 52%),
+    radial-gradient(1px 1px at 30% 15%, rgba(255, 255, 255, 0.45) 50%, transparent 52%),
+    radial-gradient(1px 1px at 65% 18%, rgba(255, 255, 255, 0.55) 50%, transparent 52%),
+    radial-gradient(1px 1px at 82% 33%, rgba(255, 255, 255, 0.52) 50%, transparent 52%),
+    radial-gradient(1px 1px at 18% 70%, rgba(255, 255, 255, 0.4) 50%, transparent 52%),
+    radial-gradient(1px 1px at 76% 74%, rgba(255, 255, 255, 0.35) 50%, transparent 52%);
+  pointer-events: none;
+}
+
+/* ── Surface panel ── */
+
+.surface-panel {
+  border-radius: 1.35rem;
+  border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
+  background: var(--bg-card);
+  padding: 1.25rem 1.5rem;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--border) 85%, transparent),
+    var(--shadow-card);
+}
+
+/* ── Animations ── */
+
+@keyframes fade-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-rise {
+  animation: fade-rise 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-rise {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── Brand tile ── */
+
+.sidebar-brand-tile {
+  transition: transform 0.2s ease;
+}
+
+.sidebar-brand-tile:hover {
+  transform: scale(1.02);
+}
+
+/* ── Text gradient ── */
+
+.text-gradient-hero {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Input magic ── */
+
+.input-magic {
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
+  background: color-mix(in srgb, var(--bg-card) 78%, transparent);
+  padding: 0.85rem 1rem;
+  font-size: 15px;
+  color: var(--text);
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.input-magic::placeholder {
+  color: var(--text-soft);
+  opacity: 0.75;
+}
+
+.input-magic:focus {
+  border-color: color-mix(in srgb, var(--primary) 45%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+}
+
+/* ── Button glow ── */
+
+.btn-primary-glow {
+  background: linear-gradient(135deg, var(--primary-2), var(--primary));
+  color: #fff;
+  font-weight: 600;
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.24),
+    0 0 0 1px rgba(255, 255, 255, 0.12);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.25s ease,
+    filter 0.2s ease;
+}
+
+.btn-primary-glow:hover {
+  filter: brightness(1.04);
+  box-shadow: var(--shadow-card);
+}
+
+.btn-primary-glow:active {
+  transform: scale(0.98);
+}
+
+/* ── App atmosphere ── */
+
+.app-atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(900px 520px at 15% -10%, color-mix(in srgb, var(--primary) 18%, transparent), transparent 60%),
+    radial-gradient(900px 560px at 95% 0%, rgba(0, 0, 0, 0.4), transparent 62%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+}
+
+.app-atmosphere::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(circle at 18% 26%, color-mix(in srgb, var(--primary) 18%, transparent) 0%, transparent 46%),
+    radial-gradient(circle at 86% 18%, rgba(0, 0, 0, 0.5) 0%, transparent 46%);
+  transform: translate(2%, 1%) scale(1.02);
+}
+
+.app-atmosphere .stars-layer {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 10% 20%, rgba(255, 255, 255, 0.12) 50%, transparent 52%),
+    radial-gradient(1px 1px at 30% 70%, rgba(255, 255, 255, 0.08) 50%, transparent 52%),
+    radial-gradient(1px 1px at 72% 15%, rgba(255, 255, 255, 0.1) 50%, transparent 52%),
+    radial-gradient(1px 1px at 88% 55%, rgba(255, 255, 255, 0.07) 50%, transparent 52%),
+    radial-gradient(1px 1px at 45% 40%, rgba(255, 255, 255, 0.06) 50%, transparent 52%);
+  opacity: 0.5;
+}
+
+/* ── Sword Navbar ── */
+
+.sword-nav {
+  background-color: var(--bg);
+  height: clamp(60px, 14.47vw, 100px) !important;
+}
+
+.sword-nav-link {
+  position: relative;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #c8c8d0;
+  letter-spacing: 0.03em;
+  transition: color 0.18s ease;
+  font-family: "Cinzel", "DM Sans", serif;
+  white-space: nowrap;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9), 0 0 12px rgba(0, 0, 0, 0.8);
+}
+
+.sword-nav-link:hover {
+  color: #ffffff;
+}
+
+.sword-nav-link[data-active] {
+  color: #ffffff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9), 0 0 8px rgba(255, 255, 255, 0.2);
+}
+
+.sword-nav-underline {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 2px;
+  background: linear-gradient(90deg, #c0392b, #e74c3c);
+  border-radius: 2px;
+  box-shadow: 0 0 6px rgba(192, 57, 43, 0.6);
+}
+
+.sword-nav-admin {
+  position: relative;
+  padding: 0.25rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #ede9e0;
+  letter-spacing: 0.04em;
+  font-family: "Cinzel", "DM Sans", serif;
+  background: linear-gradient(135deg, #c0392b 0%, #8b0000 100%);
+  border-radius: 5px;
+  clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
+  transition: filter 0.18s ease;
+  box-shadow: 0 2px 10px rgba(192, 57, 43, 0.35);
+}
+
+.sword-nav-admin:hover {
+  filter: brightness(1.15);
+}
+
+.sword-nav-admin[data-active] {
+  filter: brightness(1.2);
+}
+
+/* ── Custom scrollbar ── */
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--primary) 45%, transparent);
+  border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--primary) 70%, transparent);
+}
+
+/* ── LN Reader layout (side panel) ── */
+
+.ln-reader-with-panel {
+  position: relative;
+  display: contents; /* transparent wrapper — children lay out normally */
+}
+
+.ln-reader-content {
+  display: contents; /* transparent — children fill their natural parent */
+}
+
+/* Side panel — fixed to right edge of viewport, full height */
+.ln-side-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  width: min(320px, 88vw);
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card);
+  border-left: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.55);
+  transform: translateX(100%);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: hidden;
+}
+
+.ln-panel-open .ln-side-panel {
+  transform: translateX(0);
+}
+
+/* ── Translation feedback highlights ── */
+
+mark.correct {
+  background: color-mix(in srgb, #27ae60 22%, transparent);
+  color: #2ecc71;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+mark.wrong {
+  background: color-mix(in srgb, #c0392b 22%, transparent);
+  color: #e74c3c;
+  border-radius: 3px;
+  padding: 0 2px;
+  text-decoration: underline wavy #e74c3c;
+}
+
+/* ── Zen mode — hide navbar ── */
+
+html.zen-active .sword-nav {
+  display: none !important;
+}
+
+/* When zen is active on read route, the main needs to fill the full viewport */
+html.zen-active main {
+  height: 100dvh !important;
+}

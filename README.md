@@ -1,12 +1,43 @@
 # English Studio
 
-Ứng dụng học tiếng Anh qua đọc sách — click vào từ để tra nghĩa, IPA, lưu từ vựng cá nhân, luyện dịch và hội thoại với AI.
+Ứng dụng học tiếng Anh toàn diện dành cho người Việt. Đọc light novel, click từ để tra nghĩa AI, luyện dịch câu, luyện nói hội thoại, theo dõi tiến độ và quản lý từ vựng cá nhân.
+
+---
+
+## Tính năng
+
+| Tính năng | Mô tả |
+|---|---|
+| **Light Novel Library** | Đọc truyện, click từng từ để tra nghĩa + IPA + collocation bằng AI |
+| **Sentence Translator** | Dịch câu, AI chấm điểm bản dịch, highlight lỗi sai |
+| **Speaking Practice** | Hội thoại AI theo chủ đề, nhận feedback chi tiết |
+| **Vocabulary Notebook** | Lưu và ôn tập từ vựng cá nhân |
+| **AI Lesson Generator** | Sinh đoạn văn học theo chủ đề và cấp độ CEFR tuỳ chọn |
+| **Grammar Analyzer** | Phân tích cấu trúc ngữ pháp từng câu |
+| **PDF Import (Admin)** | Upload PDF → tự động trích xuất thành văn bản đọc được |
+| **Admin Panel** | Quản lý users, library, courses |
+
+---
+
+## Tech stack
+
+| Layer | Công nghệ |
+|---|---|
+| **Frontend** | Next.js 16, React 19, Tailwind CSS v4, Framer Motion |
+| **Backend** | Node.js, Express, TypeScript |
+| **Database** | MongoDB + Mongoose |
+| **AI** | Groq API (LLaMA 3.3 70B, LLaMA 3.1 8B) |
+| **Auth** | JWT + bcrypt |
+| **File storage** | Cloudinary (ảnh bìa, avatar) hoặc local uploads |
+
+---
 
 ## Yêu cầu
 
-- [Node.js](https://nodejs.org/) v18 trở lên
-- [MongoDB Atlas](https://www.mongodb.com/atlas) (cloud, free tier)
-- Groq API key — đăng ký miễn phí tại [console.groq.com](https://console.groq.com)
+- [Node.js](https://nodejs.org/) **v18 trở lên** (khuyến nghị v22)
+- [MongoDB](https://www.mongodb.com/try/download/community) local **hoặc** [MongoDB Atlas](https://www.mongodb.com/atlas) (free tier)
+- **Groq API key** — đăng ký miễn phí tại [console.groq.com](https://console.groq.com)
+- *(Tuỳ chọn)* [Cloudinary](https://cloudinary.com) account — dùng để lưu ảnh bìa và avatar. Nếu không có thì app vẫn chạy, chỉ mất tính năng upload ảnh.
 
 ---
 
@@ -15,39 +46,112 @@
 ### 1. Clone repo
 
 ```bash
-git clone https://github.com/phamthanhtrung284/learning-english.git
-cd learning-english
+git clone <your-repo-url>
+cd english-learning-app
 ```
 
 ### 2. Cài dependencies
 
 ```bash
-cd backend && npm install
-cd ../frontend-web && npm install
+# Backend
+cd backend-web
+npm install
+
+# Frontend (mở terminal khác)
+cd frontend
+npm install
 ```
 
-### 3. Tạo file `backend/.env`
+### 3. Cấu hình Backend — tạo file `.env`
+
+Tạo file `backend-web/.env` với nội dung sau:
 
 ```env
-MONGO_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/english-studio
-JWT_SECRET=your_super_secret_key_minimum_32_chars
+# Server
+PORT=4000
+
+# MongoDB — chọn 1 trong 2:
+# Local:
+MONGO_URI=mongodb://localhost:27017/english-studio
+# Hoặc Atlas (thay <user>, <password>, <cluster> bằng thông tin của bạn):
+# MONGO_URI=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/english-studio
+
+# JWT — chuỗi bí mật bất kỳ, tối thiểu 32 ký tự
+JWT_SECRET=replace_this_with_a_long_random_string_at_least_32_chars
+
+# Groq API key — lấy tại https://console.groq.com
 GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxx
+
+# Frontend origin — dùng để cấu hình CORS
+FRONTEND_ORIGIN=http://localhost:3000
+
+# (Tuỳ chọn) Email tài khoản muốn đặt làm admin ngay từ đầu
+# Nếu để trống thì người đăng ký đầu tiên tự động thành admin
 ADMIN_EMAIL=your@email.com
-PORT=5000
-FRONTEND_ORIGIN=http://localhost:5173
+
+# (Tuỳ chọn) Cloudinary — bỏ qua nếu không dùng upload ảnh
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 ```
 
-### 4. Chạy local
+> ⚠️ **Không commit file `.env` lên git.** File `.gitignore` đã loại trừ nó rồi.
 
+### 4. Cấu hình Frontend — tạo file `.env.local`
+
+Tạo file `frontend/.env.local`:
+
+```env
+# URL của backend (không có dấu / ở cuối)
+API_URL=http://localhost:4000
+```
+
+> Nếu không tạo file này, frontend mặc định kết nối tới `http://localhost:4000`.
+
+### 5. Chạy ứng dụng
+
+Mở **2 terminal** riêng:
+
+**Terminal 1 — Backend:**
 ```bash
-# Terminal 1
-cd backend && npm run dev
-
-# Terminal 2
-cd frontend-web && npm run dev
+cd backend-web
+npm run dev
 ```
+Backend chạy tại `http://localhost:4000`. Khi thấy dòng `Server running on port 4000` là OK.
 
-Mở **http://localhost:5173**
+**Terminal 2 — Frontend:**
+```bash
+cd frontend
+npm run dev
+```
+Frontend chạy tại `http://localhost:3000`. Mở trình duyệt vào địa chỉ này.
+
+---
+
+## Tài khoản Admin
+
+Có 2 cách để tạo tài khoản admin:
+
+1. **Tự động theo email** — đặt `ADMIN_EMAIL=your@email.com` trong `.env` backend, rồi đăng ký tài khoản với đúng email đó.
+2. **Người đăng ký đầu tiên** — nếu `ADMIN_EMAIL` không được đặt, tài khoản đầu tiên đăng ký trên hệ thống sẽ tự động thành admin.
+
+Admin có thể truy cập panel tại `/admin` để:
+- Quản lý users (cấp premium, cấp/thu hồi admin)
+- Upload truyện PDF vào thư viện
+- Quản lý Library series và chapters
+- Quản lý Courses
+
+---
+
+## Giới hạn AI
+
+| Loại tài khoản | Giới hạn |
+|---|---|
+| **Free** | 20 AI requests / ngày (reset lúc 00:00 UTC) |
+| **Premium** | Không giới hạn |
+| **Admin** | Không giới hạn |
+
+Các action tính vào quota: tra từ, dịch câu, chấm điểm bản dịch, speaking, generate lesson, phân tích paragraph.
 
 ---
 
@@ -56,153 +160,80 @@ Mở **http://localhost:5173**
 ### Backend → Railway
 
 1. Tạo account tại [railway.app](https://railway.app)
-2. New Project → Deploy from GitHub repo → chọn thư mục `backend`
-3. Thêm environment variables (giống `.env` nhưng dùng MongoDB Atlas URI)
-4. Railway sẽ tự detect Node.js và chạy `npm start`
-5. Copy URL backend (vd: `https://your-app.railway.app`)
+2. **New Project → Deploy from GitHub repo** → chọn thư mục `backend-web`
+3. Thêm tất cả các biến trong bảng dưới vào **Variables**:
+
+| Biến | Giá trị |
+|---|---|
+| `PORT` | `4000` |
+| `MONGO_URI` | MongoDB Atlas connection string |
+| `JWT_SECRET` | Chuỗi random dài ≥ 32 ký tự |
+| `GROQ_API_KEY` | Groq API key của bạn |
+| `FRONTEND_ORIGIN` | URL Vercel của frontend (sau khi deploy) |
+| `ADMIN_EMAIL` | Email admin |
+| `CLOUDINARY_CLOUD_NAME` | *(nếu dùng)* |
+| `CLOUDINARY_API_KEY` | *(nếu dùng)* |
+| `CLOUDINARY_API_SECRET` | *(nếu dùng)* |
+
+4. Railway tự detect Node.js và chạy `npm start` (script build TypeScript rồi chạy `dist/index.js`)
+5. Copy URL backend — ví dụ: `https://your-backend.railway.app`
 
 ### Frontend → Vercel
 
 1. Tạo account tại [vercel.com](https://vercel.com)
-2. Import GitHub repo → chọn thư mục `frontend-web`
-3. Thêm environment variable:
-   ```
-   VITE_API_URL=https://your-app.railway.app/api
-   ```
-4. Deploy
+2. **Import GitHub repo** → chọn thư mục `frontend`
+3. Thêm **Environment Variable**:
 
-### Sau khi deploy
-
-- Cập nhật `FRONTEND_ORIGIN` trên Railway thành URL Vercel của mày
-- Tài khoản đầu tiên đăng ký sẽ tự động là admin
-
----
-
-## Giới hạn sử dụng
-
-- **Free**: 20 AI requests/ngày (tra từ, dịch câu, speaking, v.v.)
-- **Admin**: không giới hạn
-
----
-
-## Tech stack
-
-- **Frontend:** React 19, Vite, Tailwind CSS v4, Framer Motion
-- **Backend:** Node.js, Express, MongoDB, Mongoose
-- **AI:** Groq API (LLaMA 3.3 70B)
-- **Auth:** JWT + bcrypt
-
-## Yêu cầu
-
-- [Node.js](https://nodejs.org/) v18 trở lên
-- [MongoDB](https://www.mongodb.com/try/download/community) (local) hoặc [MongoDB Atlas](https://www.mongodb.com/atlas) (cloud, miễn phí)
-- Groq API key — đăng ký miễn phí tại [console.groq.com](https://console.groq.com)
-
----
-
-## Cài đặt
-
-### 1. Clone repo
-
-```bash
-git clone https://github.com/phamthanhtrung284/learning-english.git
-cd learning-english
-```
-
-### 2. Cài dependencies
-
-```bash
-# Backend
-cd backend
-npm install
-
-# Frontend
-cd ../frontend-web
-npm install
-```
-
-### 3. Tạo file `.env` cho backend
-
-Tạo file `backend/.env` với nội dung sau:
-
-```env
-# MongoDB — dùng local hoặc Atlas
-MONGO_URI=mongodb://localhost:27017/english-studio
-
-# JWT secret — đặt chuỗi bất kỳ, càng dài càng tốt
-JWT_SECRET=your_super_secret_key_here
-
-# Groq API key — lấy tại https://console.groq.com
-GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxx
-
-# (Tuỳ chọn) Email tài khoản admin đầu tiên
-ADMIN_EMAIL=your@email.com
-
-# (Tuỳ chọn) Port backend, mặc định 5000
-PORT=5000
-
-# (Tuỳ chọn) Cho phép CORS từ frontend — để trống thì cho phép tất cả
-FRONTEND_ORIGIN=http://localhost:5173
-```
-
-> **Lưu ý:** File `.env` không được commit lên git. Đừng chia sẻ API key của bạn.
-
-### 4. Tạo file `.env` cho frontend (tuỳ chọn)
-
-Mặc định frontend kết nối tới `http://localhost:5000/api`. Nếu backend chạy port khác, tạo file `frontend-web/.env`:
-
-```env
-VITE_API_URL=http://localhost:5000/api
-```
-
----
-
-## Chạy ứng dụng
-
-Mở **2 terminal** riêng:
-
-**Terminal 1 — Backend:**
-```bash
-cd backend
-npm run dev
-```
-
-**Terminal 2 — Frontend:**
-```bash
-cd frontend-web
-npm run dev
-```
-
-Sau đó mở trình duyệt tại **http://localhost:5173**
-
----
-
-## Tài khoản Admin
-
-Tài khoản đầu tiên đăng ký sẽ tự động là admin, **hoặc** tài khoản có email trùng với `ADMIN_EMAIL` trong `.env`.
-
-Admin có thể:
-- Upload truyện PDF lên thư viện
-- Upload ảnh bìa cho từng series
-- Chỉnh sửa nội dung chapter
-
----
-
-## Tính năng chính
-
-| Tính năng | Mô tả |
+| Biến | Giá trị |
 |---|---|
-| **Light Novel Library** | Đọc sách, click từng từ để tra nghĩa + IPA |
-| **Sentence Analyzer** | Phân tích câu theo từng token bằng AI |
-| **Vocabulary Notebook** | Lưu và quản lý từ vựng cá nhân |
-| **AI Lesson Generator** | Sinh đoạn văn mẫu theo chủ đề tuỳ chọn |
-| **PDF Import** | Admin upload PDF → tự động trích xuất thành văn bản đọc được |
+| `API_URL` | URL Railway backend, ví dụ `https://your-backend.railway.app` |
+
+4. Deploy.
+
+### Sau khi deploy xong
+
+Quay lại Railway, cập nhật biến `FRONTEND_ORIGIN` thành URL Vercel thực tế của bạn (ví dụ `https://your-app.vercel.app`) để CORS hoạt động đúng.
 
 ---
 
-## Tech stack
+## Cấu trúc thư mục
 
-- **Frontend:** React 19, Vite, Tailwind CSS v4, Framer Motion
-- **Backend:** Node.js, Express, MongoDB, Mongoose
-- **AI:** Groq API (LLaMA 3.3 70B)
-- **Auth:** JWT + bcrypt
+```
+english-learning-app/
+├── backend-web/          # Express + TypeScript API
+│   ├── src/
+│   │   ├── modules/      # Feature modules (auth, ai, speaking, library…)
+│   │   ├── models/       # Mongoose models
+│   │   ├── common/       # Middleware, utils, types dùng chung
+│   │   └── config/       # DB, env validation
+│   └── package.json
+│
+├── frontend/             # Next.js 16 app
+│   ├── src/
+│   │   ├── app/          # Next.js App Router pages
+│   │   ├── components/   # UI components dùng chung
+│   │   └── client/       # Client-only pages và hooks
+│   ├── share/            # Types và services chia sẻ với backend
+│   └── package.json
+│
+└── .github/workflows/    # CI pipeline
+```
+
+---
+
+## Câu hỏi thường gặp
+
+**Q: Chạy backend thấy lỗi `Invalid environment variables`?**
+Kiểm tra file `backend-web/.env` — đảm bảo `MONGO_URI` và `JWT_SECRET` đã được đặt. `JWT_SECRET` phải ≥ 32 ký tự.
+
+**Q: Frontend báo lỗi 502 / không kết nối được backend?**
+Kiểm tra `API_URL` trong `frontend/.env.local` có trỏ đúng địa chỉ backend không. Backend phải đang chạy trước.
+
+**Q: AI không hoạt động, trả về lỗi?**
+Kiểm tra `GROQ_API_KEY` trong `.env` backend. Lấy key miễn phí tại [console.groq.com](https://console.groq.com).
+
+**Q: Tính năng upload ảnh bìa / avatar không hoạt động?**
+Cần cấu hình Cloudinary: thêm `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` vào `.env`.
+
+**Q: Quên email admin, muốn cấp lại quyền admin?**
+Dùng MongoDB shell hoặc MongoDB Compass: `db.users.updateOne({ email: "your@email.com" }, { $set: { isAdmin: true } })`

@@ -40,30 +40,22 @@ jobs:
           cache: npm
 
       - name: Backend - install
-        working-directory: backend
+        working-directory: backend-web
         run: npm ci
 
       - name: Backend - test
-        working-directory: backend
+        working-directory: backend-web
         run: npm test
 
       - name: Frontend - install
-        working-directory: frontend-web
+        working-directory: frontend
         run: npm ci
 
       - name: Frontend - lint
-        working-directory: frontend-web
+        working-directory: frontend
         run: npm run lint
 
       - name: Frontend - build
-        working-directory: frontend-web
+        working-directory: frontend
         run: npm run build
-
-      - name: Mobile - install
-        working-directory: mobile-app
-        run: npm ci
-
-      - name: Mobile - typecheck
-        working-directory: mobile-app
-        run: npx tsc -p tsconfig.json --noEmit
 
