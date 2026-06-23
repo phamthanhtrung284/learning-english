@@ -1,6 +1,6 @@
 # English Studio
 
-Ứng dụng học tiếng Anh toàn diện dành cho người Việt. Đọc light novel, click từ để tra nghĩa AI, luyện dịch câu, luyện nói hội thoại, theo dõi tiến độ và quản lý từ vựng cá nhân.
+Ứng dụng học tiếng Anh dành cho người Việt. Đọc light novel, click từ để tra nghĩa AI, luyện dịch câu, theo dõi tiến độ và quản lý từ vựng cá nhân.
 
 ---
 
@@ -45,8 +45,8 @@
 ### 1. Clone repo
 
 ```bash
-git clone <your-repo-url>
-cd english-learning-app
+git clone https://github.com/phamthanhtrung284/learning-english.git
+cd learning-english
 ```
 
 ### 2. Cài dependencies
@@ -150,7 +150,7 @@ Admin có thể truy cập panel tại `/admin` để:
 | **Premium** | Không giới hạn |
 | **Admin** | Không giới hạn |
 
-Các action tính vào quota: tra từ, dịch câu, chấm điểm bản dịch, speaking, generate lesson, phân tích paragraph.
+Các action tính vào quota: tra từ, dịch câu, chấm điểm bản dịch, generate lesson, phân tích paragraph.
 
 ---
 
@@ -174,7 +174,7 @@ Các action tính vào quota: tra từ, dịch câu, chấm điểm bản dịch
 | `CLOUDINARY_API_KEY` | *(nếu dùng)* |
 | `CLOUDINARY_API_SECRET` | *(nếu dùng)* |
 
-4. Railway tự detect Node.js và chạy `npm start` (script build TypeScript rồi chạy `dist/index.js`)
+4. Railway tự detect Node.js và chạy `npm start`
 5. Copy URL backend — ví dụ: `https://your-backend.railway.app`
 
 ### Frontend → Vercel
@@ -191,7 +191,7 @@ Các action tính vào quota: tra từ, dịch câu, chấm điểm bản dịch
 
 ### Sau khi deploy xong
 
-Quay lại Railway, cập nhật biến `FRONTEND_ORIGIN` thành URL Vercel thực tế của bạn (ví dụ `https://your-app.vercel.app`) để CORS hoạt động đúng.
+Quay lại Railway, cập nhật biến `FRONTEND_ORIGIN` thành URL Vercel thực tế của bạn để CORS hoạt động đúng.
 
 ---
 
@@ -201,7 +201,7 @@ Quay lại Railway, cập nhật biến `FRONTEND_ORIGIN` thành URL Vercel th�
 english-learning-app/
 ├── backend-web/          # Express + TypeScript API
 │   ├── src/
-│   │   ├── modules/      # Feature modules (auth, ai, speaking, library…)
+│   │   ├── modules/      # Feature modules (auth, ai, library, sentence…)
 │   │   ├── models/       # Mongoose models
 │   │   ├── common/       # Middleware, utils, types dùng chung
 │   │   └── config/       # DB, env validation
@@ -212,7 +212,7 @@ english-learning-app/
 │   │   ├── app/          # Next.js App Router pages
 │   │   ├── components/   # UI components dùng chung
 │   │   └── client/       # Client-only pages và hooks
-│   ├── share/            # Types và services chia sẻ với backend
+│   ├── share/            # Types và services chia sẻ
 │   └── package.json
 │
 └── .github/workflows/    # CI pipeline
@@ -235,4 +235,4 @@ Kiểm tra `GROQ_API_KEY` trong `.env` backend. Lấy key miễn phí tại [con
 Cần cấu hình Cloudinary: thêm `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` vào `.env`.
 
 **Q: Quên email admin, muốn cấp lại quyền admin?**
-Dùng MongoDB shell hoặc MongoDB Compass: `db.users.updateOne({ email: "your@email.com" }, { $set: { isAdmin: true } })`
+Dùng MongoDB Compass: `db.users.updateOne({ email: "your@email.com" }, { $set: { isAdmin: true } })`
