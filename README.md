@@ -10,7 +10,6 @@
 |---|---|
 | **Light Novel Library** | Đọc truyện, click từng từ để tra nghĩa + IPA + collocation bằng AI |
 | **Sentence Translator** | Dịch câu, AI chấm điểm bản dịch, highlight lỗi sai |
-| **Speaking Practice** | Hội thoại AI theo chủ đề, nhận feedback chi tiết |
 | **Vocabulary Notebook** | Lưu và ôn tập từ vựng cá nhân |
 | **AI Lesson Generator** | Sinh đoạn văn học theo chủ đề và cấp độ CEFR tuỳ chọn |
 | **Grammar Analyzer** | Phân tích cấu trúc ngữ pháp từng câu |
